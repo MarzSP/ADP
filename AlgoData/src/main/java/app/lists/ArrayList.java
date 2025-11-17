@@ -17,7 +17,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Check of er ruimte is en voeg een element toe aan het einde van de lijst
-     * @param value
+     * @param value - waarde to add
      */
     @Override
     public void add(T value) {
@@ -27,8 +27,8 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Voegt een element toe op de die index plek
-     * @param index
-     * @param element
+     * @param index plek waarop element toegevoegd moet worden
+     * @param element toe te voegen element
      */
     @Override
     public void add(int index, T element) {
@@ -46,8 +46,8 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Geeft het element met die index terug
-     * @param index
-     * @return
+     * @param index index van dat element
+     * @return element op die index
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -58,8 +58,8 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Zet het element op de opgegeven index en return het originele element
-     * @param index
-     * @param element
+     * @param index plaats van het element
+     * @param element nieuwe element
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -73,8 +73,8 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Verwijderd het element op de opgegeven index en return deze
-     * @param index
-     * @return
+     * @param index plaats van het te verwijderen element
+     * @return verwijderd element
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -91,7 +91,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Geeft de grootte van de lijst terug
-     * @return
+     * @return grootte
      */
     @Override
     public int size() {
@@ -109,7 +109,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Controleerd of de lijst het opgegeven element bevat
-     * @param value
+     * @param value te zoeken waarde
      * @return
      */
     @Override
@@ -128,8 +128,8 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Vind de index van de eerste keer dat het opgegeven element in de lijst is
-     * @param element
-     * @return
+     * @param element te zoeken element
+     * @return index van het element (-1 als not found)
      */
     @Override
     public int indexOf(T element) {
@@ -146,7 +146,7 @@ public class ArrayList<T> implements iList<T> {
     /**
      * Zorgd er voor dat de interne array genoeg capaciteit heeft
      * O(1) (amortized -> zelfde manier dat Java's arraylist werkt)
-     * @param minCapacity
+     * @param minCapacity minimale capaciteit van de array
      */
     private void ensureCapacity(int minCapacity) {
         if (minCapacity - elements.length > 0) {
@@ -160,7 +160,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Controlleerd of de index binnen de grenzen van de lijst valt
-     * @param index
+     * @param index te controleren index
      */
     private void rangeCheck(int index) {
         if (index < 0 || index >= size) {
