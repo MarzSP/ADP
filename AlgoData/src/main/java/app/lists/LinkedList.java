@@ -12,7 +12,7 @@ public class LinkedList<T> implements iList<T> {
 
     /**
      * Voeg element aan einde van lijst toe
-     * @param element
+     * @param element toe te voegen element
      */
     @Override
     public void add(T element) {
