@@ -3,6 +3,7 @@ package app.lists;
 import java.util.Arrays;
 /**
  * ArrayList implementatie van iList<T> interface
+ * SuppressWarnings("unchecked") = Java kan niet controleren of de cast veilig is bij runtime (Type erasure)
  * @param <T> - Generic type
  */
 public class ArrayList<T> implements iList<T> {
@@ -14,12 +15,21 @@ public class ArrayList<T> implements iList<T> {
         this.size = 0;
     }
 
+    /**
+     * Check of er ruimte is en voeg een element toe aan het einde van de lijst
+     * @param value
+     */
     @Override
     public void add(T value) {
         ensureCapacity(size + 1);
         elements[size++] = value;
     }
 
+    /**
+     * Voegt een element toe op de die index plek
+     * @param index
+     * @param element
+     */
     @Override
     public void add(int index, T element) {
         if (index < 0 || index > size) {
@@ -34,6 +44,11 @@ public class ArrayList<T> implements iList<T> {
         size++;
     }
 
+    /**
+     * Geeft het element met die index terug
+     * @param index
+     * @return
+     */
     @SuppressWarnings("unchecked")
     @Override
     public T get(int index) {
@@ -41,6 +56,12 @@ public class ArrayList<T> implements iList<T> {
         return (T) elements[index];
     }
 
+    /**
+     * Zet het element op de opgegeven index en return het originele element
+     * @param index
+     * @param element
+     * @return
+     */
     @SuppressWarnings("unchecked")
     @Override
     public T set(int index, T element) {
@@ -50,7 +71,11 @@ public class ArrayList<T> implements iList<T> {
         return old;
     }
 
-
+    /**
+     * Verwijderd het element op de opgegeven index en return deze
+     * @param index
+     * @return
+     */
     @SuppressWarnings("unchecked")
     @Override
     public T remove(int index) {
@@ -94,7 +119,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Controleerd of de lijst leeg is
-     * @return
+     * @return boolean
      */
     @Override
     public boolean isEmpty() {
@@ -120,6 +145,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Zorgd er voor dat de interne array genoeg capaciteit heeft
+     * O(1) (amortized -> zelfde manier dat Java's arraylist werkt)
      * @param minCapacity
      */
     private void ensureCapacity(int minCapacity) {
