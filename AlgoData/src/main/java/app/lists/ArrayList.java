@@ -60,7 +60,7 @@ public class ArrayList<T> implements iList<T> {
      * Zet het element op de opgegeven index en return het originele element
      * @param index plaats van het element
      * @param element nieuwe element
-     * @return
+     * @return originele element
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -110,7 +110,7 @@ public class ArrayList<T> implements iList<T> {
     /**
      * Controleerd of de lijst het opgegeven element bevat
      * @param value te zoeken waarde
-     * @return
+     * @return boolean true als gevonden
      */
     @Override
     public boolean contains(T value) {
@@ -145,7 +145,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Zorgd er voor dat de interne array genoeg capaciteit heeft
-     * O(1) (amortized -> zelfde manier dat Java's arraylist werkt)
+     * O(1) (amortized - zelfde manier dat Java's arraylist werkt)
      * @param minCapacity minimale capaciteit van de array
      */
     private void ensureCapacity(int minCapacity) {
