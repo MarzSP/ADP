@@ -1,4 +1,4 @@
-package app.Lists;
+package app.lists;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,9 @@
-package app.Lists;
+package app.lists;
 
 import java.util.Arrays;
-
 /**
- * ArrayList implementation of iList interface.
- * @param <T>
+ * ArrayList implementatie van iList<T> interface
+ * @param <T> - Generic type
  */
 public class ArrayList<T> implements iList<T> {
     private Object[] elements;
@@ -51,6 +50,7 @@ public class ArrayList<T> implements iList<T> {
         return old;
     }
 
+
     @SuppressWarnings("unchecked")
     @Override
     public T remove(int index) {
@@ -60,31 +60,52 @@ public class ArrayList<T> implements iList<T> {
         if (numMoved > 0) {
             System.arraycopy(elements, index + 1, elements, index, numMoved);
         }
-        elements[--size] = null; // clear to let GC do its work
+        elements[--size] = null;
         return removed;
     }
 
+    /**
+     * Geeft de grootte van de lijst terug
+     * @return
+     */
     @Override
     public int size() {
         return size;
     }
 
+    /**
+     * Leegt de lijst
+     */
     @Override
     public void clear() {
         Arrays.fill(elements, 0, size, null);
         size = 0;
     }
 
+    /**
+     * Controleerd of de lijst het opgegeven element bevat
+     * @param value
+     * @return
+     */
     @Override
     public boolean contains(T value) {
         return indexOf(value) >= 0;
     }
 
+    /**
+     * Controleerd of de lijst leeg is
+     * @return
+     */
     @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
+    /**
+     * Vind de index van de eerste keer dat het opgegeven element in de lijst is
+     * @param element
+     * @return
+     */
     @Override
     public int indexOf(T element) {
         for (int i = 0; i < size; i++) {
@@ -97,16 +118,24 @@ public class ArrayList<T> implements iList<T> {
         return -1;
     }
 
+    /**
+     * Zorgd er voor dat de interne array genoeg capaciteit heeft
+     * @param minCapacity
+     */
     private void ensureCapacity(int minCapacity) {
         if (minCapacity - elements.length > 0) {
             int oldCapacity = elements.length;
-            int newCapacity = oldCapacity + (oldCapacity >> 1); // 1.5x
+            int newCapacity = oldCapacity + (oldCapacity >> 1);
             if (newCapacity - minCapacity < 0)
                 newCapacity = minCapacity;
             elements = Arrays.copyOf(elements, newCapacity);
         }
     }
 
+    /**
+     * Controlleerd of de index binnen de grenzen van de lijst valt
+     * @param index
+     */
     private void rangeCheck(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
