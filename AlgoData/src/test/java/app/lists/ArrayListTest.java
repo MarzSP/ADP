@@ -14,6 +14,9 @@ public class ArrayListTest {
         list = new ArrayList<>();
     }
 
+    /**
+     * Elementen toevoegen en grootte controleren
+     */
     @Test
     void testAddAndGetSize() {
         assertTrue(list.isEmpty());
@@ -24,6 +27,9 @@ public class ArrayListTest {
         assertEquals("b", list.get(1));
     }
 
+    /**
+     * Elementen toevoegen op specifieke index en ophalen
+     */
     @Test
     void testAddAtIndexAndGet() {
         list.add("first");
@@ -35,6 +41,9 @@ public class ArrayListTest {
         assertEquals("third", list.get(2));
     }
 
+    /**
+     * Elementen setten en verwijderen
+     */
     @Test
     void testSetAndRemove() {
         list.add("x");
@@ -49,6 +58,9 @@ public class ArrayListTest {
         assertEquals("z", list.get(0));
     }
 
+    /**
+     * Lijst legen en controleren of leeg
+     */
     @Test
     void testClearAndIsEmpty() {
         list.add("one");
@@ -57,6 +69,9 @@ public class ArrayListTest {
         assertEquals(0, list.size());
     }
 
+    /**
+     * Bevat en indexOf methodes testen en null handling
+     */
     @Test
     void testContainsIndexOfAndNullHandling() {
         list.add(null);
@@ -69,6 +84,9 @@ public class ArrayListTest {
         assertEquals(-1, list.indexOf("nope"));
     }
 
+    /**
+     * IndexOutOfBoundsException testen
+     */
     @Test
     void testIndexOutOfBounds() {
         assertThrows(IndexOutOfBoundsException.class, () -> list.get(0));
@@ -78,6 +96,9 @@ public class ArrayListTest {
         assertThrows(IndexOutOfBoundsException.class, () -> list.add(-1, "b"));
     }
 
+    /**
+     * Grote dingen toevoegen om resizing te testen
+     */
     @Test
     void testLargeAddResizing() {
         for (int i = 0; i < 100; i++) {
