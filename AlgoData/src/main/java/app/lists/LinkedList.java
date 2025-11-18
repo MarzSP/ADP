@@ -1,5 +1,7 @@
 package app.lists;
 
+import java.util.Objects;
+
 /**
  * LinkedList implementation of iList interface.
  * Een LinkedList is geen arrayachtige, dus elementen hoeven niet te verschuiven. Alleen de verwijzingen van de nodes worden aangepast.
@@ -96,33 +98,113 @@ public class LinkedList<T> implements iList<T> {
         return oldValue;
     }
 
+    /**
+     * Verwijdert het element op de opgegeven index
+     * @param index plek van te verwijderen element
+     * @return verwijderd element
+     */
     @Override
     public T remove(int index) {
-        return null;
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+
+        Node<T> removeNode;
+
+        // verwijder head
+        if (index == 0) {
+            removeNode = head;
+            head = head.next;
+
+            if (size == 1) {
+                tail = null;
+            }
+
+        } else {
+            Node<T> current = head;
+
+            // zet node naar voor diegene die we willen verwijderen
+            for (int i = 0; i < index - 1; i++) {
+                current = current.next;
+            }
+
+            removeNode = current.next;
+            current.next = removeNode.next;
+
+            if (removeNode == tail) {
+                tail = current;
+            }
+        }
+
+        size--;
+        return removeNode.data;
     }
 
+    /**
+     * Geeft de grootte van de lijst terug
+     * @return grootte
+     */
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
+    /**
+     * Controleert of het element in de lijst zit
+     * Object.equals nodig voor null waarde vergelijking, anders indexOutOfBoundsException
+     * @param element te controleren element
+     * @return true if element in de lijst
+     */
     @Override
     public boolean contains(T element) {
+        Node<T> current = head;
+        while (current != null) {
+            if (Objects.equals(current.data, element)) {
+                return true;
+            }
+            current = current.next;
+        }
         return false;
     }
 
+    /**
+     * Vind de index van de eerste keer dat het opgegeven element in de lijst is
+     * De else clause is nodig anders krijg je een NullPointerException bij het zoeken naar null
+     * @param element te zoeken element
+     * @return index van het element (-1 not found)
+     */
     @Override
     public int indexOf(T element) {
-        return 0;
+        Node<T> current = head;
+        int index = 0;
+
+        while (current != null) {
+            if (Objects.equals(current.data, element)) {
+                return index;
+            }
+            current = current.next;
+            index++;
+        }
+
+        return -1;
     }
 
+    /**
+     * Leeg de lijst
+     */
     @Override
     public void clear() {
-
+        head = null;
+        tail = null;
+        size = 0;
     }
 
+    /**
+     * Controleerd of de lijst leeg is
+     * @return boolean true als leeg
+     */
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 }
