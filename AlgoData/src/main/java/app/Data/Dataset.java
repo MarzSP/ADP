@@ -21,7 +21,8 @@ public class Dataset {
                 "Cox", "Thompson", "Zuse", "Cerf", "Minsky", "Gates", "Allen",
                 "Page", "Brin", "Hawking", "Einstein", "Curie", "Newton",
                 "Galilei", "Feynman", "Franklin", "Bohr", "Heisenberg",
-                "Hinton", "Diffie", "Merkle", "Shamir", "Rivest", "Adleman"
+                "Hinton", "Diffie", "Merkle", "Shamir", "Rivest", "Adleman",
+                "Hyponnen"
         };
     }
 
