@@ -1,6 +1,10 @@
 package app.sorting;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MergeSortTest {
@@ -55,5 +59,61 @@ public class MergeSortTest {
         String[] array = {"banana", "apple", "cherry"};
         stringSorter.sort(array);
         assertArrayEquals(new String[]{"apple", "banana", "cherry"}, array);
+    }
+
+    /** Grote datasets testen
+     *  Deze tests testen hoe de merge sort omgaat met grote datasets.
+     *  Dus random gegenereerde arrays, al gesorteerde arrays en omgekeerd gesorteerde arrays.
+     *  Deze worden gecloned en vergeleken met de standaard Java sorteer methode.
+     *  De int size zijn ingesteld op 10.000 elementen.
+     */
+    @Test
+    void testLargeRandomArray() {
+        int size = 10_000; // MergeSort kan dit prima aan
+        Integer[] array = new Integer[size];
+
+        Random random = new Random(42); // reproducible
+        for (int i = 0; i < size; i++) {
+            array[i] = random.nextInt(1_000_000);
+        }
+
+        Integer[] expected = array.clone();
+        Arrays.sort(expected); // javas eigen standaard sorteer method
+
+        sorter.sort(array); // mijn merge sort
+
+        assertArrayEquals(expected, array); // vergelijken
+    }
+
+    @Test
+    void testLargeAlreadySortedArray() {
+        int size = 10_000;
+        Integer[] array = new Integer[size];
+
+        for (int i = 0; i < size; i++) {
+            array[i] = i;
+        }
+
+        Integer[] expected = array.clone();
+        sorter.sort(array);
+
+        assertArrayEquals(expected, array);
+    }
+
+    @Test
+    void testLargeReverseSortedArray() {
+        int size = 10_000;
+        Integer[] array = new Integer[size];
+
+        for (int i = 0; i < size; i++) {
+            array[i] = size - i;
+        }
+
+        Integer[] expected = array.clone();
+        Arrays.sort(expected);
+
+        sorter.sort(array);
+
+        assertArrayEquals(expected, array);
     }
 }
