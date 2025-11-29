@@ -64,7 +64,7 @@ public class InsertionSortTest {
     /** Large data set test */
     @Test
     void testLargeRandomArray() {
-        int size = 10_000; // of 10_000 als het te langzaam is
+        int size = 10_000;
         Integer[] array = new Integer[size];
 
         Random random = new Random(42);
