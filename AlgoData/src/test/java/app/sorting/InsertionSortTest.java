@@ -1,6 +1,10 @@
 package app.sorting;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InsertionSortTest {
@@ -55,5 +59,29 @@ public class InsertionSortTest {
         String[] array = {"banana", "apple", "cherry"};
         stringSorter.sort(array);
         assertArrayEquals(new String[]{"apple", "banana", "cherry"}, array);
+    }
+
+    /** Large data set test */
+    @Test
+    void testLargeRandomArray() {
+        int size = 10_000; // of 10_000 als het te langzaam is
+        Integer[] array = new Integer[size];
+
+        Random random = new Random(42);
+        for (int i = 0; i < size; i++) {
+            array[i] = random.nextInt(1_000_000);
+        }
+
+        // Maak een kopie voor dezelfde array om te vergelijken
+        Integer[] expected = array.clone();
+
+        //Voor referentie/vergelijking: javas eigen sort
+        Arrays.sort(expected);
+
+        // Sorteer met mijn insertion sort
+        sorter.sort(array);
+
+        // Vergelijk
+        assertArrayEquals(expected, array);
     }
 }
