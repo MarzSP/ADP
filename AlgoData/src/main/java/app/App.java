@@ -1,16 +1,18 @@
 package app;
 
 import app.Data.Dataset;
-import app.Data.Person;
+import app.lists.ArrayList;
 
+/**
+ * Marianne Peterson
+ * Studentnummer 2136361
+ * Implementatie project Algoritmes en Datastructuren
+ *
+ * Main class
+ */
 public class App {
     public static void main(String[] args) {
-        Person[] ps = Dataset.generatePeople();
-        for (Person p : ps) {
-            System.out.println(p.getName() + " - " + p.getAge());
-        }
-
-        System.out.println("Hello from AlgoData (package app)");
+        System.out.println("Implementatie project Algoritmes en Datastructuren");
     }
-}
 
+    }

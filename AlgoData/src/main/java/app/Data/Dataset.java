@@ -16,7 +16,7 @@ public class Dataset {
     public static String[] getNames() {
         return new String[]{
                 "UncleBob", "Lovelace", "McCarthy", "Gosling", "Turing",
-                "Torvalds", "Ritchie", "van Rossum", "Dijsktra", "Knuth",
+                "Torvalds", "Ritchie", "van Rossum", "Dijkstra", "Knuth",
                 "Hopper", "Berners-Lee", "Kay", "Wozniak", "Jobs", "Beck",
                 "Cox", "Thompson", "Zuse", "Cerf", "Minsky", "Gates", "Allen",
                 "Page", "Brin", "Hawking", "Einstein", "Curie", "Newton",
