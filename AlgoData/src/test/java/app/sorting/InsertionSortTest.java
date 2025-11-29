@@ -61,7 +61,12 @@ public class InsertionSortTest {
         assertArrayEquals(new String[]{"apple", "banana", "cherry"}, array);
     }
 
-    /** Large data set test */
+    /** Grote datasets testen
+     *  Deze tests testen hoe de insertion sort omgaat met grote datasets.
+     *  Dus random gegenereerde arrays, al gesorteerde arrays en omgekeerd gesorteerde arrays.
+     *  Deze worden gecloned en vergeleken met de standaard Java sorteer methode.
+     *  De int size zijn ingesteld op 10.000 elementen.
+     */
     @Test
     void testLargeRandomArray() {
         int size = 10_000;
@@ -82,6 +87,36 @@ public class InsertionSortTest {
         sorter.sort(array);
 
         // Vergelijk
+        assertArrayEquals(expected, array);
+    }
+
+    @Test
+    void testLargeAlreadySortedArray() {
+        int size = 10_000;
+        Integer[] array = new Integer[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = i;
+        }
+
+        Integer[] expected = array.clone();
+        sorter.sort(array);
+
+        assertArrayEquals(expected, array);
+    }
+
+    @Test
+    void testLargeReverseSortedArray() {
+        int size = 10_000;
+        Integer[] array = new Integer[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = size - i;
+        }
+
+        Integer[] expected = array.clone();
+        Arrays.sort(expected);
+
+        sorter.sort(array);
+
         assertArrayEquals(expected, array);
     }
 }
