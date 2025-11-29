@@ -37,7 +37,7 @@ De tijdscomplexiteit van de belangrijkste operaties in mijn Priority Queue is al
 ## Verbeterpunten
 Hoewel mijn implementatie van de Priority Queue functioneel is, zijn er enkele verbeterpunten die ik zou kunnen overwegen:
 - ensureCapacity() zou ik ook 1.5x kunnen vergroten in plaats van 2x om geheugen efficiënter te gebruiken. Scheelt overhead bij grote hoeveelheden data.
-- Minder compareTo calls aanroep door deze op te slaan in een variabele in de methods heapifyUp en heapifyDown.
+- Minder compareTo calls aanroep door deze op te slaan in een variabele in de methods heapifyUp en heapifyDown. (housekeeping variables)
 
 
 
