@@ -93,4 +93,54 @@ public class BinarySearchTest {
         assertEquals(3, bs.binarySearch(array, 5));
     }
 
+    /** Grote datasets testen
+     *  Deze tests testen hoe de binaire zoekopdracht omgaat met grote datasets.
+     */
+    @Test
+    void testLargeSortedArrayFound() {
+        BinarySearch<Integer> bs = new BinarySearch<>();
+
+        int size = 1_000_000; // 1mil elements
+        Integer[] array = new Integer[size];
+
+        // sorted waardes
+        for (int i = 0; i < size; i++) {
+            array[i] = i * 2;
+        }
+
+        // 1ste element
+        assertEquals(0, bs.binarySearch(array, 0));
+
+        // Mid element
+        int middleIndex = size / 2;
+        int middleValue = array[middleIndex];
+        assertEquals(middleIndex, bs.binarySearch(array, middleValue));
+
+        // Last element
+        int lastIndex = size - 1;
+        int lastValue = array[lastIndex];
+        assertEquals(lastIndex, bs.binarySearch(array, lastValue));
+
+        //Een paar random indices in stappen van 10k om het redelijk performant te houden
+        for (int i = 0; i < size; i += 10_000) {
+            int value = array[i];
+            assertEquals(i, bs.binarySearch(array, value));
+        }
+    }
+
+    @Test
+    void testLargeArrayNotFoundSimple() {
+        BinarySearch<Integer> bs = new BinarySearch<>();
+
+        int size = 1_000_000;
+        Integer[] array = new Integer[size];
+
+        for (int i = 0; i < size; i++) {
+            array[i] = i * 2;
+        }
+
+        assertEquals(-1, bs.binarySearch(array, 1));
+        assertEquals(-1, bs.binarySearch(array, 999_999));
+        assertEquals(-1, bs.binarySearch(array, 123_457));
+    }
 }
