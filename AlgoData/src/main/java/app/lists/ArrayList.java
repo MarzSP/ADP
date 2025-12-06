@@ -156,6 +156,7 @@ public class ArrayList<T> implements iList<T> {
     /**
      * Checked of de interne array genoeg capaciteit heeft
      * TC Best case O(1), worst case O(n)
+     * SC: O(n) bij resize
      * @param minCapacity minimale capaciteit van de array
      */
     private void ensureCapacity(int minCapacity) {
