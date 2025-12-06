@@ -2,14 +2,15 @@ package app.sorting;
 
 /**
  * Implementatie van het Insertion Sort algoritme
- * Generic Comparable<T> is nodig om elementen te kunnen vergelijken
- * iSorting<T> is nodig om de interface te implementeren zodat alle sorteer algoritmes in dit project dezelfde methodes hebben
- * Complexiteit: O(n^2) in het slechtste geval, O(n) in het beste geval
- * Slechtste geval is bijvoorbeeld bij een omgekeerd gesorteerde array. Iedere item moet terug loopen naar het begin van de array, waardoor er veel verplaatsingen zijn.
- * Beste geval is bijvoorbeeld bij een al gesorteerde array. De loop draait maar een keer door de array zonder verplaatsingen.
  * @param <T> type van de elements in de array
  */
 public class InsertionSort<T extends Comparable<T>> implements iSorting<T> {
+    /**
+     * Sorteert een gegeven array
+     * TC: O(n^2) in het slechtste geval, O(n) in het beste geval
+     * SC: O(1) in place sorting
+     * @param array De array die gesorteerd moet worden.
+     */
     @Override
     public void sort(T[] array) {
         int n = array.length;
@@ -27,6 +28,11 @@ public class InsertionSort<T extends Comparable<T>> implements iSorting<T> {
         }
     }
 
+    /**
+     * Geeft de naam van het sorteer algoritme
+     * TC: O(1)
+     * @return
+     */
     @Override
     public String getName() {
         return "Insertion Sort Algoritme";

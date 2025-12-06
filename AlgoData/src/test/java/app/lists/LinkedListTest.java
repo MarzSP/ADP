@@ -20,11 +20,11 @@ public class LinkedListTest {
     @Test
     void testAddAndGetSize() {
         assertTrue(list.isEmpty());
-        list.add("a");
-        list.add("b");
+        list.add("carol");
+        list.add("zoshia");
         assertEquals(2, list.size());
-        assertEquals("a", list.get(0));
-        assertEquals("b", list.get(1));
+        assertEquals("carol", list.get(0));
+        assertEquals("zoshia", list.get(1));
     }
 
     /**

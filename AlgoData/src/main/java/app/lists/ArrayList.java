@@ -96,6 +96,7 @@ public class ArrayList<T> implements iList<T> {
 //TODO : analyse from here and update anaysis.md
     /**
      * Geeft de grootte van de lijst terug
+     * TC: O(1)
      * @return grootte
      */
     @Override
@@ -105,6 +106,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Leegt de lijst
+     * TC: O(n)
      */
     @Override
     public void clear() {
@@ -114,6 +116,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Controleerd of de lijst het opgegeven element bevat
+     * TC: best case O(1), worst case O(n)
      * @param value te zoeken waarde
      * @return boolean true als gevonden
      */
@@ -124,6 +127,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Controleerd of de lijst leeg is
+     * TC: O(1)
      * @return boolean
      */
     @Override
@@ -133,6 +137,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Vind de index van de eerste keer dat het opgegeven element in de lijst is
+     * TC: best case O(1), worst case O(n)
      * @param element te zoeken element
      * @return index van het element (-1 als not found)
      */
@@ -151,6 +156,7 @@ public class ArrayList<T> implements iList<T> {
     /**
      * Checked of de interne array genoeg capaciteit heeft
      * TC Best case O(1), worst case O(n)
+     * SC: O(n) bij resize
      * @param minCapacity minimale capaciteit van de array
      */
     private void ensureCapacity(int minCapacity) {
@@ -165,6 +171,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Controlleerd of de index binnen de grenzen van de lijst valt
+     * TC: O(1)
      * @param index te controleren index
      */
     private void rangeCheck(int index) {
