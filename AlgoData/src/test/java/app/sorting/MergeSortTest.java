@@ -69,10 +69,10 @@ public class MergeSortTest {
      */
     @Test
     void testLargeRandomArray() {
-        int size = 10_000; // MergeSort kan dit prima aan
+        int size = 10_000;
         Integer[] array = new Integer[size];
 
-        Random random = new Random(42); // reproducible
+        Random random = new Random(42); 
         for (int i = 0; i < size; i++) {
             array[i] = random.nextInt(1_000_000);
         }
