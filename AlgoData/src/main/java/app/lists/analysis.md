@@ -55,7 +55,7 @@ De tijdscomplexiteit van de belangrijkste operaties in mijn ArrayList en LinkedL
 
 ### Verbeterpunten
 Hoewel mijn implementaties van de ArrayList en LinkedList functioneel zijn, zijn er enkele verbeterpunten die ik zou kunnen overwegen:
-- In de ArrayList zou ik kunnen overwegen om de capaciteit met 1.5x te vergroten in plaats van 2x om geheugen efficiënter te gebruiken.
+- In de ArrayList zou ik kunnen overwegen om de capaciteit met een andere hoeveelheid te vergroten in plaats van 1.5x. Use case gebonden
 - In de LinkedList zou ik een doubly linked list kunnen implementeren om het verwijderen van elementen efficiënter te maken.
 - Beide implementaties zouden extra functionaliteiten kunnen krijgen, zoals het reversen van de lijst of het sorteren van de elementen.
 
