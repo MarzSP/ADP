@@ -2,6 +2,7 @@ package app.sorting;
 
 /**
  * Interface voor het sorteren van arrays. Generieke type T moet Comparable zijn.
+ * Generic Comparable<T> is nodig om elementen te kunnen vergelijken
  * @param <T>
  */
 public interface iSorting<T extends Comparable<T>> {
@@ -12,8 +13,8 @@ public interface iSorting<T extends Comparable<T>> {
     void sort(T[] array);
 
     /**
-     *
-     * @return
+     * geeft de naam van het sorteer algoritme
+     * @return naam van t sorteer algoritme
      */
     String getName();
 }
