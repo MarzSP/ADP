@@ -1,30 +1,29 @@
 package app.sorting;
 
 /**
- * Merge Sort is een divide-and-conquer algoritme. De array wordt steeds opgesplits in twee helften totdat de stukken klein genoeg zijn (1 of 2 elementen) om vergelijkt te worden.
- * Daarna worden de stukken weer samengevoegd(merging) in gesorteerde volgorde.
+ * Merge Sort is een divide-and-conquer algoritme.
  * Time complexity: O(n log n) in alle gevallen omdat de array steeds in tweeen wordt gedeeld (het log n gedeelte) en en in elke laag wordt de hele array 1 keer
  * doorlopen tijdens het mergen (n).
- * Space complexity: O(n) omdat tijdens het mergen tijdelijke arrays nodig zijn voor de linker en rechterhelft.
+ * Space complexity: O(n) want extra arrays tijdens het splitsen/sorteren
  */
 public class MergeSort<T extends Comparable<T>> implements iSorting<T> {
 
     /**
-     * Sorteert de gegeven array, deze is generics en heeft Comparable nodig om elementen te vergelijken.
+     * TC: O(n log n)
      * @param array De array die gesorteerd moet worden.
      */
     @Override
     public void sort(T[] array) {
         if (array.length < 2) {
-            return; // array al gesorteerd
+            return;
         }
         int mid = array.length / 2;
 
-        // copyOfRange maakt nieuwe arrays aan voor de linker en rechter helft
+        // copyOfRange: nieuwe arrays aan voor de linker en rechter helft
         T[] left = java.util.Arrays.copyOfRange(array, 0, mid);
         T[] right = java.util.Arrays.copyOfRange(array, mid, array.length);
 
-        // Recursief sorteren van beide helften
+        // Recursief sorteren
         sort(left);
         sort(right);
 
@@ -42,7 +41,7 @@ public class MergeSort<T extends Comparable<T>> implements iSorting<T> {
         int j = 0;
         int k = 0;
 
-        // Compare elementen van beide helften en voeg de kleinste toe aan de originele array
+        // Compare elementen van beide helften + voeg de kleinste toe aan de originele array
         while (i < left.length && j < right.length) {
             if (left[i].compareTo(right[j]) <= 0) {
                 array[k++] = left[i++];
