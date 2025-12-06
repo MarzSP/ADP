@@ -14,6 +14,7 @@ public class LinkedList<T> implements iList<T> {
 
     /**
      * Voeg element aan einde van lijst toe
+     * TC: O(1)
      * @param element toe te voegen element
      */
     @Override
@@ -24,6 +25,7 @@ public class LinkedList<T> implements iList<T> {
     /**
      * Voegt een element toe op de die index plek
      * Maakt Head en Tail nodes aan als nodig
+     * TC: best case O(1), worst case O(n)
      * @param index plek waarop element toegevoegd moet worden
      * @param element toe te voegen element
      */
@@ -60,6 +62,7 @@ public class LinkedList<T> implements iList<T> {
 
     /**
      * Haalt het element op de opgegeven index op
+     * TC: Best case O(1), worst case O(n)
      * @param index index van ophalen element
      * @return element op die index
      */
@@ -78,6 +81,7 @@ public class LinkedList<T> implements iList<T> {
     }
     /**
      * Zet het opgegeven element op de opgegeven index
+     * TC: Best case O(1), worst case O(n)
      * @param index positie waar element gezet moet worden
      * @param element te zetten element
      * @return oude element dat op die plek stond
@@ -100,6 +104,7 @@ public class LinkedList<T> implements iList<T> {
 
     /**
      * Verwijdert het element op de opgegeven index
+     * TC: Best case O(1), worst case O(n)
      * @param index plek van te verwijderen element
      * @return verwijderd element
      */
@@ -142,6 +147,7 @@ public class LinkedList<T> implements iList<T> {
 
     /**
      * Geeft de grootte van de lijst terug
+     * TC: O(1)
      * @return grootte
      */
     @Override
@@ -152,6 +158,7 @@ public class LinkedList<T> implements iList<T> {
     /**
      * Controleert of het element in de lijst zit
      * Object.equals nodig voor null waarde vergelijking, anders indexOutOfBoundsException
+     * TC: Best case O(1), worst case O(n)
      * @param element te controleren element
      * @return true if element in de lijst
      */
@@ -170,6 +177,7 @@ public class LinkedList<T> implements iList<T> {
     /**
      * Vind de index van de eerste keer dat het opgegeven element in de lijst is
      * De else clause is nodig anders krijg je een NullPointerException bij het zoeken naar null
+     * TC: Best case O(1), worst case O(n)
      * @param element te zoeken element
      * @return index van het element (-1 not found)
      */
@@ -191,6 +199,7 @@ public class LinkedList<T> implements iList<T> {
 
     /**
      * Leeg de lijst
+     * TC: O(1)
      */
     @Override
     public void clear() {
@@ -201,6 +210,7 @@ public class LinkedList<T> implements iList<T> {
 
     /**
      * Controleerd of de lijst leeg is
+     * TC: O(1)
      * @return boolean true als leeg
      */
     @Override
