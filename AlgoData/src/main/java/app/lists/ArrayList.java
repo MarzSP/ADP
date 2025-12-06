@@ -17,6 +17,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Check of er ruimte is en voeg een element toe aan het einde van de lijst
+     * TC: best case O(1), worst case O(n)
      * @param value - waarde to add
      */
     @Override
@@ -27,6 +28,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Voegt een element toe op de die index plek
+     * TC: best case O(1), worst case O(n)
      * @param index plek waarop element toegevoegd moet worden
      * @param element toe te voegen element
      */
@@ -46,6 +48,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Geeft het element met die index terug
+     * TC: O(1)
      * @param index index van dat element
      * @return element op die index
      */
@@ -58,6 +61,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Zet het element op de opgegeven index en return het originele element
+     * TC: O(1)
      * @param index plaats van het element
      * @param element nieuwe element
      * @return originele element
@@ -73,6 +77,7 @@ public class ArrayList<T> implements iList<T> {
 
     /**
      * Verwijderd het element op de opgegeven index en return deze
+     * TC: best case O(1), worst case O(n)
      * @param index plaats van het te verwijderen element
      * @return verwijderd element
      */
@@ -88,7 +93,7 @@ public class ArrayList<T> implements iList<T> {
         elements[--size] = null;
         return removed;
     }
-
+//TODO : analyse from here and update anaysis.md
     /**
      * Geeft de grootte van de lijst terug
      * @return grootte
@@ -144,14 +149,14 @@ public class ArrayList<T> implements iList<T> {
     }
 
     /**
-     * Zorgd er voor dat de interne array genoeg capaciteit heeft
-     * O(1) (amortized - zelfde manier dat Java's arraylist werkt)
+     * Checked of de interne array genoeg capaciteit heeft
+     * TC Best case O(1), worst case O(n)
      * @param minCapacity minimale capaciteit van de array
      */
     private void ensureCapacity(int minCapacity) {
         if (minCapacity - elements.length > 0) {
             int oldCapacity = elements.length;
-            int newCapacity = oldCapacity + (oldCapacity >> 1);
+            int newCapacity = oldCapacity + (oldCapacity / 2);
             if (newCapacity - minCapacity < 0)
                 newCapacity = minCapacity;
             elements = Arrays.copyOf(elements, newCapacity);
