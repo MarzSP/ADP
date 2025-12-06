@@ -41,7 +41,7 @@ public class MergeSort<T extends Comparable<T>> implements iSorting<T> {
         int j = 0;
         int k = 0;
 
-        // Compare elementen van beide helften + voeg de kleinste toe aan de originele array
+        // Compare + voeg elements van beide helften samen in de originele array
         while (i < left.length && j < right.length) {
             if (left[i].compareTo(right[j]) <= 0) {
                 array[k++] = left[i++];
@@ -50,9 +50,9 @@ public class MergeSort<T extends Comparable<T>> implements iSorting<T> {
             }
         }
 
-        //1 van de 2 helften raakt altijd eerder leeg tijdens het samenvoegen
-        //De overgebleven elementen in de andere helft zijn al gesorteerd maar staan nog niet in de eindarray.
-       // Dus: kopieer de resterende elementen van de linker helft
+         //1 van de 2 helften raakt altijd eerder leeg tijdens het samenvoegen
+        // Gesorteerde elements moeten nog naar de eindarray
+       // Kopieer de resterende elementen van de linker helft
         while (i < left.length) {
             array[k++] = left[i++];
         }
