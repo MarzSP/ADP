@@ -1,151 +1,95 @@
 package app.priorityQueue;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T> {
 
-    private T[] heap;
-    private int size;
+    private final List<Entry<T>> list = new ArrayList<>();
 
     /**
-     * Constructor: suppressWarnings omdat Java geen generieke arrays toestaat
      * TC: O(1)
-     * SC: O(n)
+     * @param value de waarde om op te slaan
+     * @param priority  prioriteit (lager = meer prioriteit)
      */
-    @SuppressWarnings("unchecked")
-    public PriorityQueue() {
-        heap = (T[]) new Comparable[10];
-        size = 0;
+    public void enqueue(T value, int priority) {
+        list.add(new Entry<>(value, priority)); // O(1)
     }
 
     /**
-     * Voeg element toe aan de priority queue
-     * TC: O(log n)
-     * @param element toe te voegen element
+     * Verwijder en return het element met de hoogste prioriteit
+     * TC: O(n)
+     * @return
      */
-    @Override
-    public void enqueue(T element) {
-        ensureCapacity(size + 1);
-        heap[size] = element;
-        heapifyUp(size);
-        size++;
-    }
-
-    /**
-     * Verwijder en return het element met de hoogste prioriteit (laagste waarde)
-     * TC: O(log n)
-     * @return verwijderd element
-     */
-    @Override
     public T dequeue() {
-        if (isEmpty()) return null;
-
-        T removed = heap[0];
-        heap[0] = heap[size - 1];
-        size--;
-
-        heapifyDown(0);
-        return removed;
+        if (list.isEmpty()) return null;
+        return list.remove(findBestIndex()).value;
     }
 
     /**
-     * Controleer of de priority queue leeg is
-     * TC: O(1)
-     * @return true als leeg
+     * Bekijk het element met de hoogste prioriteit zonder remove
+     * TC: O(n)
+     * @return
      */
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    /**
-     * Return de grootte van de priority queue
-     * TC: O(1)
-     * @return grootte
-     */
-    @Override
-    public int size() {
-        return size;
-    }
-
-    /**
-     * Peek = kijk naar het element met de hoogste prio zonder deze te verwijderen
-     * TC: O(1)
-     * @return element met hoogste prio
-     */
-    @Override
     public T peek() {
-        if (isEmpty()) return null;
-        return heap[0];
+        if (list.isEmpty()) return null;
+        return list.get(findBestIndex()).value;
     }
 
     /**
-     * Zorg dat de heap genoeg capaciteit heeft
-     * TC: Best case O(1), worst case O(n)
-     * SC: O(n) bij resize
-     * @param minCapacity min. capaciteit
+     * Zoek de index van het element met de hoogste prioriteit
+     * TC: O(n)
+     * @return
      */
-    private void ensureCapacity(int minCapacity) {
-        if (minCapacity > heap.length) {
-            heap = Arrays.copyOf(heap, heap.length * 2);
-        }
-    }
-
-    /**
-     *  Maakt de heap geldig door een element omhoog te verplaatsen
-     *  TC: O(log n)
-     * @param index index van het te verplaatsen element
-     */
-    private void heapifyUp(int index) {
-        int parent = (index - 1) / 2;
-
-        while (index > 0 && heap[index].compareTo(heap[parent]) < 0) {
-            swap(index, parent);
-            index = parent;
-            parent = (index - 1) / 2;
-        }
-    }
-
-    /**
-     * Maakt de heap geldig door een element omlaag te verplaatsen
-     * Verwijder altijd het root element dus begin altijd bij index 0
-     * SuppressWarnings omdat de parameter altijd 0 is bij aanroep
-     * TC: O(log n)
-     * @param index index van het te verplaatsen element
-     */
-    @SuppressWarnings( "SameParameterValue" )
-    private void heapifyDown(int index) {
-        while (true) {
-            int left = index * 2 + 1;
-            int right = index * 2 + 2;
-            int smallest = index;
-
-            if (left < size && heap[left].compareTo(heap[smallest]) < 0) {
-                smallest = left;
+    private int findBestIndex() {
+        int best = 0;
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i).compareTo(list.get(best)) < 0) {
+                best = i;
             }
-
-            if (right < size && heap[right].compareTo(heap[smallest]) < 0) {
-                smallest = right;
-            }
-
-            if (smallest == index) {
-                break;
-            }
-
-            swap(index, smallest);
-            index = smallest;
         }
+        return best;
+    }
+
+
+    /**
+     * Check of een waarde in de priority queue zit
+     * TC: O(n)
+     */
+    public boolean contains(T value) {
+        for (Entry<T> entry : list) {
+            if (entry.value.equals(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * Wissel twee elementen in de heap
-     * TC: O(1)
-     * @param i index van het eerste element
-     * @param j index van het tweede element
+     * Verwijder eerste voorkomen van een element op basis van waarde
+     * TC: O(n)
      */
-    private void swap(int i, int j) {
-        T tmp = heap[i];
-        heap[i] = heap[j];
-        heap[j] = tmp;
+    public boolean remove(T value) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).value.equals(value)) {
+                list.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Update de priority van een bestaand element
+     * TC: O(n)
+     */
+    public boolean updatePriority(T value, int newPriority) {
+        for (Entry<T> entry : list) {
+            if (entry.value.equals(value)) {
+                entry.priority = newPriority;
+                return true;
+            }
+        }
+        return false;
     }
 }
