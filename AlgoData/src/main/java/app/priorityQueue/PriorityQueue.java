@@ -19,7 +19,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
     /**
      * Verwijder en return het element met de hoogste prioriteit
      * TC: O(n)
-     * @return
+     * @return element met highest priority
      */
     public T dequeue() {
         if (list.isEmpty()) return null;
@@ -29,7 +29,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
     /**
      * Bekijk het element met de hoogste prioriteit zonder remove
      * TC: O(n)
-     * @return
+     * @return element met highest priority
      */
     public T peek() {
         if (list.isEmpty()) return null;
@@ -39,7 +39,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
     /**
      * Zoek de index van het element met de hoogste prioriteit
      * TC: O(n)
-     * @return
+     * @return index van element met highest priority
      */
     private int findBestIndex() {
         int best = 0;
@@ -55,6 +55,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
     /**
      * Check of een waarde in de priority queue zit
      * TC: O(n)
+     * returns true als waarde gevonden is
      */
     public boolean contains(T value) {
         for (Entry<T> entry : list) {
@@ -68,6 +69,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
     /**
      * Verwijder eerste voorkomen van een element op basis van waarde
      * TC: O(n)
+     * returns true als waarde gevonden en verwijderd is
      */
     public boolean remove(T value) {
         for (int i = 0; i < list.size(); i++) {
@@ -82,6 +84,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
     /**
      * Update de priority van een bestaand element
      * TC: O(n)
+     * returns true als waarde gevonden en priority is aangepast
      */
     public boolean updatePriority(T value, int newPriority) {
         for (Entry<T> entry : list) {
