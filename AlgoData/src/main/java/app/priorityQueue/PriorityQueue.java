@@ -9,6 +9,8 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
 
     /**
      * Constructor: suppressWarnings omdat Java geen generieke arrays toestaat
+     * TC: O(1)
+     * SC: O(n)
      */
     @SuppressWarnings("unchecked")
     public PriorityQueue() {
@@ -18,6 +20,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
 
     /**
      * Voeg element toe aan de priority queue
+     * TC: O(log n)
      * @param element toe te voegen element
      */
     @Override
@@ -30,6 +33,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
 
     /**
      * Verwijder en return het element met de hoogste prioriteit (laagste waarde)
+     * TC: O(log n)
      * @return verwijderd element
      */
     @Override
@@ -46,6 +50,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
 
     /**
      * Controleer of de priority queue leeg is
+     * TC: O(1)
      * @return true als leeg
      */
     @Override
@@ -55,6 +60,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
 
     /**
      * Return de grootte van de priority queue
+     * TC: O(1)
      * @return grootte
      */
     @Override
@@ -64,6 +70,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
 
     /**
      * Peek = kijk naar het element met de hoogste prio zonder deze te verwijderen
+     * TC: O(1)
      * @return element met hoogste prio
      */
     @Override
@@ -74,6 +81,8 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
 
     /**
      * Zorg dat de heap genoeg capaciteit heeft
+     * TC: Best case O(1), worst case O(n)
+     * SC: O(n) bij resize
      * @param minCapacity min. capaciteit
      */
     private void ensureCapacity(int minCapacity) {
@@ -84,6 +93,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
 
     /**
      *  Maakt de heap geldig door een element omhoog te verplaatsen
+     *  TC: O(log n)
      * @param index index van het te verplaatsen element
      */
     private void heapifyUp(int index) {
@@ -100,6 +110,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
      * Maakt de heap geldig door een element omlaag te verplaatsen
      * Verwijder altijd het root element dus begin altijd bij index 0
      * SuppressWarnings omdat de parameter altijd 0 is bij aanroep
+     * TC: O(log n)
      * @param index index van het te verplaatsen element
      */
     @SuppressWarnings( "SameParameterValue" )
@@ -128,6 +139,7 @@ public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T>
 
     /**
      * Wissel twee elementen in de heap
+     * TC: O(1)
      * @param i index van het eerste element
      * @param j index van het tweede element
      */
