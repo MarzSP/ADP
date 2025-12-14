@@ -1,8 +1,7 @@
 package app.priorityQueue;
 import java.util.LinkedList;
 
-public class PriorityQueue<T extends Comparable<T>>
-        implements iPriorityQueue<T> {
+public class PriorityQueue<T> implements iPriorityQueue<T> {
 
     /**
      * Interne bucket:

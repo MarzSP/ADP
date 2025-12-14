@@ -1,6 +1,6 @@
 package app.priorityQueue;
 
-public interface iPriorityQueue<T extends Comparable<T>> {
+public interface iPriorityQueue<T> {
 
     /**
      * Voeg een nieuw element toe aan de queue met een prio

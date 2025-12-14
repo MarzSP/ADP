@@ -1,182 +1,203 @@
 package app.priorityQueue;
-
-import app.Data.Dataset;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class PriorityQueueTest {
 
-    private PriorityQueue<String> pq;
-
-    @BeforeEach
-    void setUp() {
-        pq = new PriorityQueue<>();
-    }
-
-    private static String[] getNames() {
-        return Dataset.getNames();
-    }
-
     @Test
-    void emptyQueuePeekAndDequeue() {
-        assertNull(pq.peek(), "Empty queue should return null with peek");
-        assertNull(pq.dequeue(), "Empty queue should return null with dequeue");
-    }
-
-    @Test
-    void dequeueCheckPriorityOrder() {
-        // lagere waarde = hogere prioriteit
-        pq.enqueue("UncleBob", 5);
-        pq.enqueue("Lovelace", 1);
-        pq.enqueue("McCarthy", 3);
-
-        // hoogste prioriteit is Lovelace (prio 1)
-        assertEquals("Lovelace", pq.peek(), "peek returns element with highest priority");
-        assertEquals("Lovelace", pq.dequeue());
-        assertEquals("McCarthy", pq.dequeue());
-        assertEquals("UncleBob", pq.dequeue());
-
+    void dequeueEmptyReturnsNull() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
         assertNull(pq.dequeue());
+    }
+
+    @Test
+    void peekEmptyReturnsNull() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
         assertNull(pq.peek());
     }
 
+    //peek() mag alleen kijken, met dequeue() checken we dat het el er nog in zit
     @Test
     void peekDoesntRemoveElement() {
-        pq.enqueue("Turing", 2);
-        pq.enqueue("Lovelace", 1);
+        PriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("Turing", 1);
 
-        // Lovelace heeft hoogste prioriteit
-        assertEquals("Lovelace", pq.peek(), "peek shows highest-priority element");
-        // peek mag niet verwijderen
-        assertEquals("Lovelace", pq.peek(), "peek shouldnt remove the element");
-
-        // dequeue haalt nu pas weg
-        assertEquals("Lovelace", pq.dequeue());
+        assertEquals("Turing", pq.peek());
+        assertEquals("Turing", pq.peek());
         assertEquals("Turing", pq.dequeue());
-        assertNull(pq.dequeue());
-    }
-
-    @Test
-    void duplicateWithSamePrio() {
-        pq.enqueue("Turing", 2);
-        pq.enqueue("Turing", 2);
-        pq.enqueue("Lovelace", 1);
-
-        // Eerst Lovelace (prio 1)
-        assertEquals("Lovelace", pq.dequeue());
-
-        // Daarna de twee Turings (zelfde prio)
-        String firstTuring = pq.dequeue();
-        String secondTuring = pq.dequeue();
-
-        assertEquals("Turing", firstTuring);
-        assertEquals("Turing", secondTuring);
-        assertNull(pq.dequeue());
-    }
-
-    @Test
-    void manyElementsInPriorityOrder() {
-        String[] names = getNames();
-
-        // gebruik de eerste 15 namen, priority = index
-        for (int i = 0; i < 15; i++) {
-            pq.enqueue(names[i], i); // 0 = hoogste prioriteit
-        }
-
-        // in volgorde van prioriteit dequeuen
-        for (int i = 0; i < 15; i++) {
-            String dequeued = pq.dequeue();
-            assertEquals(names[i], dequeued,
-                    "Elements are dequeued in order of increasing priority");
-        }
-
-        assertNull(pq.dequeue());
         assertNull(pq.peek());
     }
 
+    //Bij gelijke prio moet FIFO gelden zodat 1ste added ook 1ste out is
     @Test
-    void operationsRespectPriority() {
-        pq.enqueue("Torvalds", 10);
-        pq.enqueue("Ritchie", 4);
-
-        assertEquals("Ritchie", pq.dequeue());
-
-        pq.enqueue("van Rossum", 6);
-        pq.enqueue("Dijsktra", 2);
-
-        assertEquals("Dijsktra", pq.peek());
-
-        assertEquals("Dijsktra", pq.dequeue());
-        assertEquals("van Rossum", pq.dequeue());
-        assertEquals("Torvalds", pq.dequeue());
-        assertNull(pq.dequeue());
-        assertNull(pq.peek());
-    }
-
-
-    @Test
-    void containsChecksPresenceOfValue() {
-        pq.enqueue("Lovelace", 1);
-        pq.enqueue("Turing", 2);
-
-        assertTrue(pq.contains("Lovelace"));
-        assertTrue(pq.contains("Turing"));
-        assertFalse(pq.contains("Einstein"));
-
-        // na dequeue moet contains nog kloppen
-        pq.dequeue(); // Lovelace eruit
-        assertFalse(pq.contains("Lovelace"));
-        assertTrue(pq.contains("Turing"));
-    }
-
-    @Test
-    void removeDeletesFirstMatchingValue() {
+    void samePriorityIsFIFO() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
         pq.enqueue("Turing", 5);
-        pq.enqueue("Lovelace", 1);
-        pq.enqueue("Turing", 3);
+        pq.enqueue("Dijkstra", 5);
+        pq.enqueue("UncleBob", 5);
 
-        // remove verwijdert eerste "Turing"
-        assertTrue(pq.remove("Turing"));
-        // er staat nog steeds één Turing en één Lovelace in
+        assertEquals("Turing", pq.dequeue());
+        assertEquals("Dijkstra", pq.dequeue());
+        assertEquals("UncleBob", pq.dequeue());
+        assertNull(pq.dequeue());
+    }
+
+    // El met laagste nr komt eerst uit de queue
+    @Test
+    void differentPrioHighestPrioFirst() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("Galileo", 10);
+        pq.enqueue("UncleBob", 1);
+        pq.enqueue("Newton", 5);
+
+        assertEquals("UncleBob", pq.dequeue());
+        assertEquals("Newton", pq.dequeue());
+        assertEquals("Galileo", pq.dequeue());
+    }
+
+    // Bij mix prioriteiten blijft de FIFO-volgorde binnen dezelfde prioriteit bestaan
+    @Test
+    void mixedPriosRespectsOrder() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("Curie", 2);
+        pq.enqueue("Turing", 1);
+        pq.enqueue("Galileo", 2);
+        pq.enqueue("Dijkstra", 1);
+
+        assertEquals("Turing", pq.dequeue());
+        assertEquals("Dijkstra", pq.dequeue());
+        assertEquals("Curie", pq.dequeue());
+        assertEquals("Galileo", pq.dequeue());
+    }
+
+    //Vind waarde ongeacht in welke prio die zit
+    @Test
+    void containsWorksAcrossBuckets() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("Curie", 3);
+        pq.enqueue("Turing", 1);
+
+        assertTrue(pq.contains("Curie"));
         assertTrue(pq.contains("Turing"));
-        assertTrue(pq.contains("Lovelace"));
+        assertFalse(pq.contains("Newton"));
+    }
 
-        // verwijderen van iets dat er niet meer in zit geeft false
-        assertTrue(pq.remove("Turing"));  // tweede Turing eruit
-        assertFalse(pq.remove("Turing")); // nu bestaat hij niet meer
+    //remove() geeft false terug als de waarde niet in de queue zit
+    @Test
+    void removeReturnsFalseWhenValueNotPresent() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("Turing", 1);
 
-        assertTrue(pq.contains("Lovelace"));
-        assertFalse(pq.contains("Turing"));
+        assertFalse(pq.remove("Galileo"));
+        assertEquals("Turing", pq.dequeue());
     }
 
     @Test
-    void updatePriorityChangesOrder() {
-        pq.enqueue("Lovelace", 5);
+    void removeExistingValueKeepsOrder() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("Curie", 2);
+        pq.enqueue("Newton", 2);
+        pq.enqueue("Galileo", 2);
+
+        assertTrue(pq.remove("Newton"));
+
+        assertEquals("Curie", pq.dequeue());
+        assertEquals("Galileo", pq.dequeue());
+        assertNull(pq.dequeue());
+    }
+
+    @Test
+    void removeLastValueUpdatesHead() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("UncleBob", 1);
         pq.enqueue("Turing", 2);
-        pq.enqueue("Dijsktra", 1);
 
-        // Eerst Dijsktra (1) > Turing (2) > Lovelace (5)
-        assertEquals("Dijsktra", pq.peek());
+        assertTrue(pq.remove("UncleBob"));
 
-        // maak Lovelace nu hoogste prioriteit
-        assertTrue(pq.updatePriority("Lovelace", 0));
-
-        // nu moet Lovelace eerst komen
-        assertEquals("Lovelace", pq.dequeue());
-        // daarna nog steeds "Dijsktra" en "Turing" in volgorde van priority
-        assertEquals("Dijsktra", pq.dequeue());
+        assertEquals("Turing", pq.peek());
         assertEquals("Turing", pq.dequeue());
         assertNull(pq.dequeue());
     }
 
     @Test
-    void updatePriorityReturnsFalseIfValueNotFound() {
-        pq.enqueue("Lovelace", 1);
+    void updatePrioMissingValueIsFalse() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("Galileo", 5);
 
-        assertFalse(pq.updatePriority("Turing", 0));
-        // Lovelace is nog steeds enige element
-        assertEquals("Lovelace", pq.peek());
+        assertFalse(pq.updatePriority("Curie", 1));
+        assertEquals("Galileo", pq.dequeue());
     }
+
+    //verplaatst een el naar zijn nieuwe prio
+    @Test
+    void updatePrioExisingValueMovesElement() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("Newton", 5);
+        pq.enqueue("Dijkstra", 1);
+
+        assertTrue(pq.updatePriority("Newton", 0));
+
+        assertEquals("Newton", pq.dequeue());
+        assertEquals("Dijkstra", pq.dequeue());
+    }
+
+    //Check FIFO bij prio update
+    @Test
+    void updatePrioExistingPrioKeepsOrder() {
+        iPriorityQueue<String> pq = new PriorityQueue<>();
+        pq.enqueue("Turing", 1);
+        pq.enqueue("Dijkstra", 1);
+        pq.enqueue("Curie", 2);
+
+        assertTrue(pq.updatePriority("Curie", 1));
+
+        assertEquals("Turing", pq.dequeue());
+        assertEquals("Dijkstra", pq.dequeue());
+        assertEquals("Curie", pq.dequeue());
+    }
+
+    @Test
+    void enqueueNullThrows() {
+        PriorityQueue<String> pq = new PriorityQueue<>();
+        assertThrows(IllegalArgumentException.class, () -> pq.enqueue(null, 1));
+    }
+
+    /**
+     * Demo test t.b.v verbeterpunt: Map
+     * Deze test laat zien dat enqueue trager wordt wanneer er veel verschillende prioriteiten zijn
+     *
+     * Vergelijken twee situaties:
+     * - veel elementen met dezelfde prio
+     * - veel elementen met allemaal een andere prio
+     * In het tweede geval moet enqueue steeds meer buckets doorlopen om
+     * de juiste plek te vinden, waardoor het duidelijk langer duurt.
+     * Gemiddelde over 5 runs:
+     * - Same priority enqueue: ~13 ms
+     * - Many priorities enqueue: ~13868 ms
+    */
+    @Test
+    void enqueueManyDifferentPrioritiesCanBeSlow() {
+        int n = 100_000;
+
+        PriorityQueue<String> samePriorityQueue = new PriorityQueue<>();
+        PriorityQueue<String> manyPrioritiesQueue = new PriorityQueue<>();
+
+        long startSame = System.currentTimeMillis();
+        for (int i = 0; i < n; i++) {
+            samePriorityQueue.enqueue("Turing" + i, 1);
+        }
+        long durationSame = System.currentTimeMillis() - startSame;
+
+        long startMany = System.currentTimeMillis();
+        for (int i = 0; i < n; i++) {
+            manyPrioritiesQueue.enqueue("Dijkstra" + i, i);
+        }
+        long durationMany = System.currentTimeMillis() - startMany;
+
+        System.out.println("Same priority enqueue: " + durationSame + " ms");
+        System.out.println("Many priorities enqueue: " + durationMany + " ms");
+
+        assertTrue(durationMany >= durationSame);
+    }
+
 }
