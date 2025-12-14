@@ -1,111 +1,186 @@
 package app.hashtable;
 
 /**
- * Implementatie van een hashtable met generieke types voor key en value
- * @param <K> type van de key
- * @param <V> type van de value
+ * Generic hashtable implementatie met linear probing
+ * - Collisions: linear probing
+ * - Resize: bij load factor > 0.75 doen we rehash naar een grotere array
  */
 public class HashTable<K, V> implements iHashable<K, V> {
 
-    public K[] array; //array om de keys op te slaan
-    public V[] values; //array om de values op te slaan
-    public int size; //aantal elementen in de hashtable
-    public static final int DEFAULT_CAPACITY = 16; //standaard capaciteit van de hashtable
+    private static final int DEFAULT_CAPACITY = 16;
+    private static final double MAX_LOAD_FACTOR = 0.75;
 
-    // Constructor
-    @SuppressWarnings("unchecked")
+    private Object[] keys;
+    private Object[] values;
+    private int size;
+
     public HashTable() {
-        array = (K[]) new Object[DEFAULT_CAPACITY];
-        values = (V[]) new Object[DEFAULT_CAPACITY];
+        keys = new Object[DEFAULT_CAPACITY];
+        values = new Object[DEFAULT_CAPACITY];
         size = 0;
     }
 
     /**
-     * Hashfunctie om de index in de array te berekenen
-     * Math.abs om negatieve indexen te voorkomen
-     * key.hashCode() geeft een unieke integer voor de key
-     * modulo array.length zorgt ervoor dat de index binnen de grenzen van de array blijft omdat de array lengte verschillend kan zijn
-     * @param key  key waarvoor de index berekend moet worden
-     * @return index in de array
+     * Berekent de hash index voor een key
+     * TC: O(1)
+     * SC: O(1)
      */
-    public int hash(K key) {
-        return Math.abs(key.hashCode()) % array.length;
+    private int hash(K key, int length) {
+        // & 0x7fffffff maakt het positief (veiliger dan Math.abs bij MIN_VALUE)
+        return (key.hashCode() & 0x7fffffff) % length;
+    }
+
+    private int hash(K key) {
+        return hash(key, keys.length);
     }
 
     /**
-     * Zoekt de juiste plek voor een key in de array
-     * @param key key waarvoor de plek gezocht moet worden
-     * @return index in de array waar de key geplaatst kan worden
+     * Controleert of er genoeg ruimte is om een element toe te voegen.
+     * Zo niet, dan resize + rehash.
+     * TC: Best O(1), Worst O(n) wanneer resize nodig is
+     * SC: Worst O(n) nieuwe arrays bij resize
      */
-    public int findPlace(K key) {
+    private void ensureCapacityForAdd() {
+        if ((size + 1) > (int) (keys.length * MAX_LOAD_FACTOR)) {
+            resize(keys.length * 2);
+        }
+    }
+
+    /**
+     * Vergroot de hashtable en herplaatst alle elementen.
+     * TC: O(n) alle elementen opnieuw hashen
+     * SC: O(n) nieuwe arrays
+     */
+    @SuppressWarnings("unchecked")
+    private void resize(int newCapacity) {
+        Object[] oldKeys = keys;
+        Object[] oldValues = values;
+
+        keys = new Object[newCapacity];
+        values = new Object[newCapacity];
+        size = 0;
+
+        for (int i = 0; i < oldKeys.length; i++) {
+            if (oldKeys[i] != null) {
+                put((K) oldKeys[i], (V) oldValues[i]);
+            }
+        }
+    }
+
+    /**
+     * Zoekt de index van een key, of geeft -1 terug als hij niet bestaat.
+     * TC: Best O(1) Worst O(n) want bij veel collisions moet je ver zoeken
+     * SC: O(1)
+     */
+    private int findIndex(K key) {
         int index = hash(key);
 
-        //Linear probe: ga door totdat er een lege plek is of de key gevonden is
-        while (array[index] != null && !array[index].equals(key)) {
-            index = (index + 1) % array.length; // lineaire probing
+        while (keys[index] != null) {
+            if (keys[index].equals(key)) {
+                return index;
+            }
+            index = (index + 1) % keys.length;
         }
+
+        return -1;
+    }
+
+    /**
+     * Zoekt een lege plek om een key te plaatsen (of de plek van dezelfde key).
+     * TC: Best O(1) Worst O(n) veel collisions
+     * SC: O(1)
+     */
+    private int findInsertIndex(K key) {
+        int index = hash(key);
+
+        while (keys[index] != null && !keys[index].equals(key)) {
+            index = (index + 1) % keys.length;
+        }
+
         return index;
     }
 
     /**
-     * Voegt een key-value paar toe aan de hashtable
-     * @param key key die toegevoegd moet worden
-     * @param value value die toegevoegd moet worden
+     * Voegt een key-value paar toe of overschrijft een bestaande key.
+     * TC: Best O(1)  Worst O(n) bij resize of collisions
+     * SC: O(1)
      */
     @Override
     public void put(K key, V value) {
-        int index = findPlace(key);
+        if (key == null) throw new IllegalArgumentException("key mag niet null zijn");
 
-        //Als de plek leeg is, verhoog de size
-        if (array[index] == null) {
+        ensureCapacityForAdd();
+
+        int index = findInsertIndex(key);
+
+        if (keys[index] == null) {
             size++;
         }
 
-        array[index] = key; // sla key op
-        values[index] = value; // sla value op
-
+        keys[index] = key;
+        values[index] = value;
     }
 
     /**
-     * Haalt de value op voor een gegeven key
-     * @param key de key waarvan de value opgezocht wordt
-     * @return value voor de key als er geen is dan null
+     * Haalt de value op voor een gegeven key.
+     * TC: Best O(1) Worst O(n)
+     * SC: O(1)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public V get(K key) {
-        int index = findPlace(key);
+        if (key == null) return null;
 
-        if (array[index] == null) {
-            return null; // key niet gevonden
-        }
+        int index = findIndex(key);
+        if (index == -1) return null;
 
-        return values[index];
+        return (V) values[index];
     }
 
     /**
-     * Verwijdert een key-value paar uit de hashtable
-     * @param key de key die verwijderd moet worden
-     * @return de verwijderde value
+     * Verwijdert een key-value paar uit de hashtable.
+     * Omdat we geen tombstones gebruiken, moeten we de probe-keten repareren:
+     * - Na het verwijderen rehashen we alle keys erna totdat we een null tegenkomen.
+     * TC: Best O(1) Worst O(n) bij veel collisions
+     * SC: O(1)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public V remove(K key) {
-        int index = findPlace(key);
-        if (array[index] == null) {
-            return null; // key niet gevonden
-        }
-        V removedValue = values[index];
+        if (key == null) return null;
 
-        array[index] = null;
+        int index = findIndex(key);
+        if (index == -1) return null;
+
+        V removedValue = (V) values[index];
+
+        // Maak het gat
+        keys[index] = null;
         values[index] = null;
         size--;
+
+        // Rehash de cluster na dit gat anders worden keys "onvindbaar"
+        int next = (index + 1) % keys.length;
+        while (keys[next] != null) {
+            K rehashKey = (K) keys[next];
+            V rehashValue = (V) values[next];
+
+            keys[next] = null;
+            values[next] = null;
+            size--; // put() telt hem straks weer mee
+
+            put(rehashKey, rehashValue);
+
+            next = (next + 1) % keys.length;
+        }
 
         return removedValue;
     }
 
     /**
-     * Controleert of de key al bestaat. Geeft het iets terug? Dan bestaat de key al
-     * @param key de key die gechecked moet worden
-     * @return true als de key bestaat, anders false
+     * Controleer of een key bestaat
+     * TC: Best O(1), Average O(1), Worst O(n)
+     * SC: O(1)
      */
     @Override
     public boolean containsKey(K key) {
@@ -113,12 +188,12 @@ public class HashTable<K, V> implements iHashable<K, V> {
     }
 
     /**
-    * Geeft het aantal elementen in de hashtable terug
-     * @return aantal elementen in de hashtable
-    */
+     * Geef het aantal opgeslagen elementen terug
+     * TC: O(1)
+     * SC: O(1)
+     */
     @Override
     public int size() {
         return size;
     }
-
 }
