@@ -1,59 +1,46 @@
 package app.graph;
 
-import app.Data.Person;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GraphTest {
+class GraphTest {
 
     @Test
-    public void addEdgeCreateUndirectedConnection() {
-        Person a = new Person("Carol", 25);
-        Person b = new Person("Rabanne", 30);
-        Graph g = new Graph(new Person[]{a, b});
+    void addEdge_addsVerticesAutomatically_andStoresNeighbor() {
+        Graph<String> graph = new Graph<>();
 
-        g.addEdge(a, b, 5);
+        graph.addEdge("A", "B", 5);
 
-        Map<Person, Integer> na = g.getNeighbours(a);
-        Map<Person, Integer> nb = g.getNeighbours(b);
+        assertTrue(graph.getVertices().contains("A"));
+        assertTrue(graph.getVertices().contains("B"));
 
-        assertNotNull(na);
-        assertNotNull(nb);
-        assertTrue(na.containsKey(b), "a should have b as neighbor");
-        assertTrue(nb.containsKey(a), "b should have a as neighbor");
-        assertEquals(5, na.get(b).intValue());
-        assertEquals(5, nb.get(a).intValue());
+        List<Graph.Edge<String>> neighbors = graph.getNeighbours("A");
+        assertEquals(1, neighbors.size());
+        assertEquals("B", neighbors.get(0).destination);
+        assertEquals(5, neighbors.get(0).weight);
     }
 
     @Test
-    public void addEdgeWithUnknownNodeDoesNada() {
-        Person a = new Person("Carol", 25);
-        Person unknown = new Person("Unknown", 40);
-        Graph g = new Graph(new Person[]{a});
-
-        // unknown not part of graph
-        g.addEdge(a, unknown, 3);
-
-        Map<Person, Integer> na = g.getNeighbours(a);
-        assertNotNull(na);
-        assertFalse(na.containsKey(unknown), "edge to unknown node should not be added");
+    void neighborsOfUnknownVertex_returnsEmptyList() {
+        Graph<String> graph = new Graph<>();
+        assertTrue(graph.getNeighbours("X").isEmpty());
     }
 
     @Test
-    public void getNodesContainsAllGivenNodes() {
-        Person a = new Person("Zoshia", 25);
-        Person b = new Person("Rabanne", 30);
-        Person c = new Person("Carol", 28);
-        Graph g = new Graph(new Person[]{a, b, c});
+    void graphIsDirected_byDefault() {
+        Graph<String> graph = new Graph<>();
+        graph.addEdge("A", "B", 1);
 
-        Set<Person> nodes = g.getNodes();
-        assertEquals(3, nodes.size());
-        assertTrue(nodes.contains(a));
-        assertTrue(nodes.contains(b));
-        assertTrue(nodes.contains(c));
+        assertEquals(1, graph.getNeighbours("A").size());
+        assertEquals(0, graph.getNeighbours("B").size()); // geen automatische terug-edge
+    }
+
+    @Test
+    void negativeWeights_areNotAllowed() {
+        Graph<String> graph = new Graph<>();
+        assertThrows(IllegalArgumentException.class, () -> graph.addEdge("A", "B", -1));
     }
 }
