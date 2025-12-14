@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GraphTest {
 
     @Test
-    void addEdge_addsVerticesAutomatically_andStoresNeighbor() {
+    void addEdgeAddsVerticesAutomaticallyAndStoresNeighbour() {
         Graph<String> graph = new Graph<>();
 
         graph.addEdge("A", "B", 5);
@@ -24,13 +24,13 @@ class GraphTest {
     }
 
     @Test
-    void neighborsOfUnknownVertex_returnsEmptyList() {
+    void neighboursOfUnknownVertexReturnsEmptyList() {
         Graph<String> graph = new Graph<>();
         assertTrue(graph.getNeighbours("X").isEmpty());
     }
 
     @Test
-    void graphIsDirected_byDefault() {
+    void graphIsDirected() {
         Graph<String> graph = new Graph<>();
         graph.addEdge("A", "B", 1);
 
@@ -39,7 +39,7 @@ class GraphTest {
     }
 
     @Test
-    void negativeWeights_areNotAllowed() {
+    void negativeWeightsNotAllowed() {
         Graph<String> graph = new Graph<>();
         assertThrows(IllegalArgumentException.class, () -> graph.addEdge("A", "B", -1));
     }
