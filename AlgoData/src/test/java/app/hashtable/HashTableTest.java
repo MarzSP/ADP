@@ -2,11 +2,10 @@ package app.hashtable;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests voor de HashTable implementatie
- */
 public class HashTableTest {
 
     @Test
@@ -20,21 +19,16 @@ public class HashTableTest {
         assertEquals(2, table.get("b"));
     }
 
-    /**
-     * Deze test is nodig om te controleren of het opvragen van een niet-bestaande key wordt afgehandeld
-     */
+
+    //Deze test is nodig om te controleren of het opvragen van een niet-bestaande key wordt afgehandeld
     @Test
     void testGetUnknownKeyReturnsNull() {
         HashTable<String, Integer> table = new HashTable<>();
-
         table.put("a", 1);
-
         assertNull(table.get("b")); // b is nooit toegevoegd, alleen a
     }
 
-    /**
-     * Deze test is nodig omdat het overschrijven van een bestaande key de size van de hashtable niet mag vergrooten
-     */
+    // Deze test is nodig omdat het overschrijven van een bestaande key de size van de hashtable niet mag vergrooten
     @Test
     void testOverwriteExistingKeyDoesNotIncreaseSize() {
         HashTable<String, Integer> table = new HashTable<>();
@@ -51,10 +45,8 @@ public class HashTableTest {
         HashTable<String, Integer> table = new HashTable<>();
 
         assertEquals(0, table.size());
-
         table.put("a", 1);
         table.put("b", 2);
-
         assertEquals(2, table.size());
     }
 
@@ -66,23 +58,19 @@ public class HashTableTest {
         table.put("b", 2);
 
         Integer removed = table.remove("a");
-
         assertEquals(1, removed);         // value terug die is verwijderd
         assertNull(table.get("a"));       // a bestaat niet meer
         assertEquals(1, table.size());    // size is kleiner geworden
     }
 
-    /**
-     * Deze test is nodig om te controleren of het verwijderen van een niet-bestaande key wel wordt afgehandeld
-     */
+
+    // Deze test is nodig om te controleren of het verwijderen van een niet-bestaande key goed wordt afgehandeld
     @Test
     void testRemoveNonExistingKeyReturnsNull() {
         HashTable<String, Integer> table = new HashTable<>();
-
         table.put("a", 1);
 
         Integer removed = table.remove("b"); // b bestaat niet
-
         assertNull(removed);
         assertEquals(1, table.size()); // size verandert niet
     }
@@ -90,7 +78,6 @@ public class HashTableTest {
     @Test
     void testContainsKey() {
         HashTable<String, Integer> table = new HashTable<>();
-
         table.put("a", 1);
 
         assertTrue(table.containsKey("a"));
@@ -103,14 +90,58 @@ public class HashTableTest {
     @Test
     void testCollisionAndLinearProbing() {
         HashTable<Integer, String> table = new HashTable<>();
-
-        // 1 en 17 hebben dezelfde hash modulo 16 (DEFAULT_CAPACITY)
         table.put(1, "een");
-        table.put(17, "zeventien");
+        table.put(17, "zeventien"); // 1 % 16 == 17 % 16
 
-        //Met linear probing kunnen we beide keys terugvinden
         assertEquals("een", table.get(1));
         assertEquals("zeventien", table.get(17));
         assertEquals(2, table.size());
+    }
+
+    @Test
+    void TestGetWorksAfterRemoveRehashesCluster() {
+        HashTable<Integer, String> table = new HashTable<>();
+        table.put(1, "een");
+        table.put(17, "zeventien");
+        table.put(33, "drieendertig"); // zelfde cluster
+
+        table.remove(1);
+
+        assertEquals("zeventien", table.get(17));
+        assertEquals("drieendertig", table.get(33));
+        assertNull(table.get(1));
+        assertEquals(2, table.size());
+    }
+
+    @Test
+    void resizeKeepsAllValues() {
+        HashTable<Integer, String> table = new HashTable<>();
+
+        for (int i = 0; i < 20; i++) {
+            table.put(i, "v" + i);
+        }
+
+        for (int i = 0; i < 20; i++) {
+            assertEquals("v" + i, table.get(i));
+        }
+
+        assertEquals(20, table.size());
+    }
+
+    @Test
+    void testLargeTablePutGetManyValues() {
+        assertTimeoutPreemptively(Duration.ofSeconds(2), () -> {
+            HashTable<Integer, String> table = new HashTable<>();
+            int n = 50_000;
+            for (int i = 0; i < n; i++) {
+                table.put(i, "v" + i);
+            }
+
+            assertEquals(n, table.size());
+
+            for (int i = 0; i < n; i++) {
+                assertEquals("v" + i, table.get(i));
+            }
+        });
     }
 }
