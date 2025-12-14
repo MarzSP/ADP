@@ -1,41 +1,53 @@
 package app.graph;
 
-import app.Data.Person;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
- * Class dat een gewogen Graph maakt met adjacency list. Maakt gebruik van Person nodes.
- * Het is een map van maps, waarbij de key van de buitenste map een node is,
- * en de value een map is van de neighbours (keys) en hun gewichten (values)
- * Time complexity: O(1) voor toevoegen en opvragen van buren
- * Space complexity: O(V + E) waarbij V het aantal knopen is en E het aantal randen
- */
-public class Graph {
-    public Map<Person, Map<Person, Integer>> adjacency = new HashMap<>();
+ * Generieke implementatie van een gewogen graaf op basis van een adjacency list.
+ * De graaf wordt opgeslagen als een Map waarbij:
+ * Key: Vertex
+ * Value: een lijst is van uitgaande edges met weights
+ * De graph is generic en kan gebruikt worden met elk type vertex,
+ * zoals bijvoorbeeld Person. (Zie Class DijkstraDemo)
+ **/
+public class Graph<Vertex> {
 
-    public Graph(Person[] nodes) {
-        for (Person node : nodes) {
-            adjacency.put(node, new HashMap<>());
+    /**
+     * Edge is een weighted verbinding naar een andere vertex
+     */
+    public static class Edge<Vertex> {
+        public final Vertex destination;
+        public final int weight;
+
+        public Edge(Vertex destination, int weight) {
+            if (weight < 0) {
+                throw new IllegalArgumentException("Dijkstra's algoritme doet niet aan negatieve gewichten");
+            }
+            this.destination = destination;
+            this.weight = weight;
         }
     }
 
-    public void addEdge(Person from, Person to, int weight) {
-        if(!adjacency.containsKey(from) || !adjacency.containsKey(to)) {
-            return;
-        }
-        adjacency.get(from).put(to, weight);
-        adjacency.get(to).put(from, weight);
+    /**
+     * Adjacency list: elke vertex een lijst heeft van zijn directe buren met weights
+     */
+    private final Map<Vertex, List<Edge<Vertex>>> adjacencyList = new HashMap<>();
+
+    public void addVertex(Vertex vertex) {
+        adjacencyList.putIfAbsent(vertex, new ArrayList<>());
     }
 
-    public Map<Person, Integer > getNeighbours(Person node) {
-        return adjacency.get(node);
+    public void addEdge(Vertex from, Vertex to, int weight) {
+        addVertex(from);
+        addVertex(to);
+        adjacencyList.get(from).add(new Edge<>(to, weight));
     }
 
-    public Set<Person> getNodes() {
-        return adjacency.keySet();
+    public List<Edge<Vertex>> getNeighbours(Vertex vertex) {
+        return adjacencyList.getOrDefault(vertex, Collections.emptyList());
     }
 
+    public Set<Vertex> getVertices() {
+        return adjacencyList.keySet();
+    }
 }
