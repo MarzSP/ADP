@@ -1,98 +1,147 @@
 package app.priorityQueue;
+import java.util.LinkedList;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class PriorityQueue<T extends Comparable<T>> implements iPriorityQueue<T> {
-
-    private final List<Entry<T>> list = new ArrayList<>();
+public class PriorityQueue<T extends Comparable<T>>
+        implements iPriorityQueue<T> {
 
     /**
-     * TC: O(1)
-     * @param value de waarde om op te slaan
-     * @param priority  prioriteit (lager = meer prioriteit)
+     * Interne bucket:
+     * één prioriteit met een FIFO-lijst van waarden
      */
+    private static class Bucket<T> {
+        int priority;
+        LinkedList<T> values = new LinkedList<>();
+        Bucket<T> next;
+
+        Bucket(int priority) {
+            this.priority = priority;
+        }
+    }
+
+    private Bucket<T> head; // bucket met hoogste prioriteit
+    private int size = 0;
+
+    @Override
     public void enqueue(T value, int priority) {
-        list.add(new Entry<>(value, priority)); // O(1)
+        if (value == null) {
+            throw new IllegalArgumentException("value mag niet null zijn");
+        }
+
+        // lege queue
+        if (head == null) {
+            head = new Bucket<>(priority);
+            head.values.add(value);
+            size++;
+            return;
+        }
+
+        // nieuwe hoogste prioriteit
+        if (priority < head.priority) {
+            Bucket<T> bucket = new Bucket<>(priority);
+            bucket.values.add(value);
+            bucket.next = head;
+            head = bucket;
+            size++;
+            return;
+        }
+
+        Bucket<T> current = head;
+        Bucket<T> previous = null;
+
+        // zoek juiste plek
+        while (current != null && current.priority < priority) {
+            previous = current;
+            current = current.next;
+        }
+
+        // bucket met zelfde prioriteit gevonden
+        if (current != null && current.priority == priority) {
+            current.values.add(value);
+        } else {
+            // nieuwe bucket invoegen
+            Bucket<T> bucket = new Bucket<>(priority);
+            bucket.values.add(value);
+            bucket.next = current;
+            previous.next = bucket;
+        }
+
+        size++;
     }
 
-    /**
-     * Verwijder en return het element met de hoogste prioriteit
-     * TC: O(n)
-     * @return element met highest priority
-     */
+    @Override
     public T dequeue() {
-        if (list.isEmpty()) return null;
-        return list.remove(findBestIndex()).value;
+        if (head == null) {
+            return null;
+        }
+
+        T value = head.values.removeFirst();
+        size--;
+
+        if (head.values.isEmpty()) {
+            head = head.next;
+        }
+
+        return value;
     }
 
-    /**
-     * Bekijk het element met de hoogste prioriteit zonder remove
-     * TC: O(n)
-     * @return element met highest priority
-     */
+    @Override
     public T peek() {
-        if (list.isEmpty()) return null;
-        return list.get(findBestIndex()).value;
+        if (head == null) return null;
+        return head.values.getFirst();
     }
 
-    /**
-     * Zoek de index van het element met de hoogste prioriteit
-     * TC: O(n)
-     * @return index van element met highest priority
-     */
-    private int findBestIndex() {
-        int best = 0;
-        for (int i = 1; i < list.size(); i++) {
-            if (list.get(i).compareTo(list.get(best)) < 0) {
-                best = i;
-            }
-        }
-        return best;
-    }
-
-
-    /**
-     * Check of een waarde in de priority queue zit
-     * TC: O(n)
-     * returns true als waarde gevonden is
-     */
+    @Override
     public boolean contains(T value) {
-        for (Entry<T> entry : list) {
-            if (entry.value.equals(value)) {
+        for (Bucket<T> b = head; b != null; b = b.next) {
+            if (b.values.contains(value)) {
                 return true;
             }
         }
         return false;
     }
 
-    /**
-     * Verwijder eerste voorkomen van een element op basis van waarde
-     * TC: O(n)
-     * returns true als waarde gevonden en verwijderd is
-     */
+    @Override
     public boolean remove(T value) {
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).value.equals(value)) {
-                list.remove(i);
+        Bucket<T> previous = null;
+        Bucket<T> current = head;
+
+        while (current != null) {
+            if (current.values.remove(value)) {
+                size--;
+
+                // bucket leeg? verwijder hem
+                if (current.values.isEmpty()) {
+                    if (previous == null) {
+                        head = current.next;
+                    } else {
+                        previous.next = current.next;
+                    }
+                }
                 return true;
             }
+            previous = current;
+            current = current.next;
         }
+
         return false;
     }
 
-    /**
-     * Update de priority van een bestaand element
-     * TC: O(n)
-     * returns true als waarde gevonden en priority is aangepast
-     */
+    @Override
     public boolean updatePriority(T value, int newPriority) {
-        for (Entry<T> entry : list) {
-            if (entry.value.equals(value)) {
-                entry.priority = newPriority;
-                return true;
-            }
+        // Eerst verwijderen
+        if (!remove(value)) {
+            return false;
         }
-        return false;
+        //opnieuw invoegen met nieuwe prioriteit
+        enqueue(value, newPriority);
+        return true;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
     }
 }
