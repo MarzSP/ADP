@@ -1,43 +1,97 @@
 ## Priority Queue
-In mijn implementatie van de Priority Queue heb ik gebruik gemaakt van een binaire heap.
-Een binaire heap betekend dat elke parent node maximaal twee child nodes heeft.
-Daarnaast is een binaire heap een complete boom, wat betekent dat alle niveaus van de boom
-Een boom betekend dat elke node een waarde heeft en dat er een hiërarchie is tussen de nodes.
 
-In deze implementatie heb ik gekozen voor een min-heap, wat betekent dat de parent node altijd
-kleiner is dan of gelijk is aan zijn child nodes. Dit maakt het gemakkelijk om het element met de
-hoogste prioriteit (de kleinste waarde) snel te vinden en te verwijderen. Deze wordt opgeslagen in een generieke array (T[] heap).
+In mijn implementatie van de Priority Queue maak ik gebruik van buckets op basis van prioriteit, opgeslagen in een linked-list.  
+Elke bucket heeft een prioriteit en bevat een LinkedList met values. Dit zorgt voor FIFO/queue gedrag.: als meerdere elementen dezelfde prioriteit hebben, worden ze in de volgorde waarin ze zijn toegevoegd ook weer verwijderd.
 
-### Operaties
-De belangrijkste operaties die ik heb geïmplementeerd in de Priority Queue zijn:
-- **Enqueue** (invoegen van een element): een element wordt achteraan de array toegevoegd.
-- **Dequeue** (verwijderen van het element met de hoogste prioriteit): Ik verwijder het element aan het begin van de array (de root van de heap, index 0) en vervang deze door het laatste element in de array. Vervolgens herstructureer ik de heap om de heap-eigenschap te houden met de heapifyDown method.
-- **Peek** (bekijken van het element met de hoogste prioriteit zonder het te verwijderen) met heap[0].
-- **IsEmpty** (controleren of de queue leeg is) met size == 0.
-- **Size** (teruggeven van het aantal elementen in de queue) met size.
-- **Clear** (leegmaken van de queue) met size = 0.
-- **ensureCapacity** (controleren of de array genoeg capaciteit heeft en als nodig deze te vergroten) met Arrays.copyOf().
-- **heapifyUp** (herstructureren van de heap na het toevoegen van een element) door het nieuwe element omhoog te verplaatsen totdat de heap-eigenschap is hersteld.
-- **heapifyDown** (herstructureren van de heap na het verwijderen van het element met de hoogste prioriteit) door het nieuwe root-element omlaag te verplaatsen totdat de heap-eigenschap is hersteld.
-- **swap** (wisselen van twee elementen in de array) door gebruik te maken van een tijdelijke variabele T temp.
+- **Lagere priority-waarde = hogere prioriteit**
+- De head wijst altijd naar de bucket met de hoogste prioriteit
+- De buckets zijn onderling gekoppeld via een linked list
 
-### Complexiteit
-De tijdscomplexiteit van de belangrijkste operaties in mijn Priority Queue is als volgt:
-- **Enqueue**: O(log n) in het slechtste geval, omdat het nieuwe element mogelijk helemaal naar boven moet worden verplaatst.
-- **Dequeue**: O(log n) in het slechtste geval, omdat het nieuwe root element mogelijk helemaal naar beneden moet worden verplaatst.
-- **Peek**: O(1), omdat het element met de hoogste prioriteit direct toegankelijk is.
-- **IsEmpty**: O(1), omdat het alleen een vergelijking is.
-- **Size**: O(1), omdat het alleen een variabele returned.
-- **Clear**: O(1), omdat het alleen de size variable reset.
-- **ensureCapacity**: O(n) in het slechtste geval, wanneer de array groter moet worden gemaakt.
-- **heapifyUp**: O(log n) in het slechtste geval, omdat het element mogelijk helemaal naar boven moet worden verplaatst.
-- **heapifyDown**: O(log n) in het slechtste geval, omdat het element mogelijk helemaal naar beneden moet worden verplaatst.
-- **swap**: O(1), omdat het alleen drie assignments zijn.
+---
+### Bucket (inner class)
+- `int priority`
+- `LinkedList<T> values`  FIFO binnen dezelfde prioriteit
+- `Bucket<T> next`  verwijzing naar de volgende bucket
+
+### PriorityQueue
+- `Bucket<T> head` bucket met hoogste prioriteit
+- `int size` totaal aantal elementen (n)
+
+---
+
+## Operaties
+
+### Enqueue 
+Bij het toevoegen van een element wordt de juiste bucket gezocht of aangemaakt.
+
+- Als de queue leeg is wordt een nieuwe bucket aangemaakt.
+- Als de nieuwe prioriteit hoger is dan de huidige head, wordt de nieuwe bucket vooraan geplaatst.
+- Anders wordt door de buckets gelopen:
+    - Bestaat de prioriteit al dan wordt het element achteraan toegevoegd (FIFO).
+    - Bestaat de prioriteit nog niet dan wordt een nieuwe bucket op de juiste plek ingevoegd.
+
+### Dequeue 
+- Verwijdert het eerste element uit de bucket met de hoogste prioriteit.
+- Als deze bucket leeg raakt, wordt deze uit de linked list verwijderd.
+
+### Peek 
+- Geeft het eerste element van de hoogste prioriteit terug zonder deze te verwijderen.
+
+### Contains
+- Loopt door alle buckets en hun lijsten om te controleren of een waarde voorkomt.
+
+### Remove
+- Zoekt de waarde in alle buckets en verwijdert het eerste voorkomen.
+- Als de bijbehorende bucket leeg raakt, wordt deze opgeruimd.
+
+### UpdatePriority
+- Verwijdert eerst de waarde uit de queue.
+- Voegt deze daarna opnieuw toe met de nieuwe prioriteit.
+
+---
+
+## Complexiteit
+
+### Time complexity
+- **Enqueue**  
+  In het slechtste geval moet de hele bucket-lijst doorlopen. **O(n)**
+
+- **Dequeue**  
+  Verwijderen van het eerste element uit de head-bucket.**O(1)**
+
+- **Peek**  
+  Directe toegang tot het eerste element. **O(1)**
+
+- **Contains**  
+  In het slechtste geval wordt elk element gecontroleerd. **O(n)**
+
+- **Remove**  
+  In het slechtste geval wordt elk element gecontroleerd.  **O(n)**
+
+- **UpdatePriority**  
+  Bestaat uit `remove` + `enqueue` dus **O(n)**
+
+### Space complexity
+- **O(n)** voor het opslaan van alle elementen
+Extra overhead voor buckets en linked list-structuur
+
+---
 
 ## Verbeterpunten
-Hoewel mijn implementatie van de Priority Queue functioneel is, zijn er enkele verbeterpunten die ik zou kunnen overwegen:
-- ensureCapacity() zou ik ook 1.5x kunnen vergroten in plaats van 2x om geheugen efficiënter te gebruiken. Scheelt overhead bij grote hoeveelheden data.
-- Minder compareTo calls aanroep door deze op te slaan in een variabele in de methods heapifyUp en heapifyDown. (housekeeping variables)
 
+- **Zoekoperaties: lineair**  
+  Operaties zoals `contains`, `remove` en `updatePriority` zijn **O(n)**.  
+  Dit kan sneller met een extra `HashMap`, maar dat maakt het wel complexer.
 
+- **Comparable kan gewenst zijn in specifieke use cases**  
+  `Comparable<T>` kan handig zijn wanneer elementen met dezelfde prioriteit onderling ook gesorteerd moeten worden,  
+  bijvoorbeeld op naam, tijdstip of een andere eigenschap.
 
+- **Veel verschillende prioriteiten**  
+  Bij veel verschillende prioriteiten wordt `enqueue` trager.  
+  In dat geval kan een Map van prioriteiten naar buckets de prestaties verbeteren. Zie voorbeeldtest enqueueManyDifferentPrioritiesCanBeSlow()
+Bij het invoegen van veel elementen met dezelfde prioriteit duurt enqueue
+  gemiddeld ongeveer 13 ms. Wanneer elk element een unieke prioriteit krijgt,
+  loopt deze tijd op tot gemiddeld ongeveer 13868 ms (gemeten over 5 runs).
+Dit verschil ontstaat omdat de implementatie bij elke enqueue lineair door
+de bestaande buckets moet lopen om de juiste plek te vinden.
