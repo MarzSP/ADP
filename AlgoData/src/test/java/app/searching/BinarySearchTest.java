@@ -2,145 +2,142 @@ package app.searching;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BinarySearchTest {
+class BinarySearchTreeTest {
 
     @Test
-    void testFindMiddleElement() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
-        Integer[] array = {1, 3, 5, 7, 9};
+    void insertAndContainsWork() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        assertEquals(2, bs.binarySearch(array, 5)); // mid
+        bst.insert(8);
+        bst.insert(3);
+        bst.insert(10);
+
+        assertTrue(bst.contains(8));
+        assertTrue(bst.contains(3));
+        assertTrue(bst.contains(10));
+        assertFalse(bst.contains(999));
     }
 
     @Test
-    void testFindFirstElementLeft() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
-        Integer[] array = {2, 4, 6, 8, 10};
+    void sizeStartsAtZeroAndIncreasesOnUniqueInsert() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        assertEquals(0, bs.binarySearch(array, 2)); // eerste element
+        assertEquals(0, bst.size());
+
+        bst.insert(5);
+        bst.insert(2);
+        bst.insert(8);
+
+        assertEquals(3, bst.size());
     }
 
     @Test
-    void testFindLastElementRight() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
-        Integer[] array = {2, 4, 6, 8, 10};
+    void duplicateValuesAreIgnored() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        assertEquals(4, bs.binarySearch(array, 10)); // laatste element
+        bst.insert(5);
+        bst.insert(5);
+        bst.insert(5);
+
+        assertEquals(1, bst.size());
+        assertTrue(bst.contains(5));
     }
 
     @Test
-    void testElementNotFound() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
-        Integer[] array = {1, 2, 3, 4, 5};
+    void findMinAndFindMaxReturnNullOnEmptyTree() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        assertEquals(-1, bs.binarySearch(array, 99)); // bestaat niet
-    }
-
-    /**
-     * Deze test is nodig om te controleren dat het gedrag correct is met een lege array
-     */
-    @Test
-    void testEmptyArray() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
-        Integer[] array = {};
-
-        assertEquals(-1, bs.binarySearch(array, 10)); // leeg is -1
+        assertNull(bst.findMin());
+        assertNull(bst.findMax());
     }
 
     @Test
-    void testSingleElementArrayFound() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
-        Integer[] array = {42};
+    void findMinAndFindMaxWork() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        assertEquals(0, bs.binarySearch(array, 42)); // vindt t element
+        bst.insert(8);
+        bst.insert(3);
+        bst.insert(10);
+        bst.insert(1);
+        bst.insert(14);
+
+        assertEquals(1, bst.findMin());
+        assertEquals(14, bst.findMax());
     }
 
-    /**
-     * Deze test is nodig om te controleren of er wel -1 wordt teruggegeven als het element niet in een enkele element array zit
-     */
     @Test
-    void testSingleElementArrayNotFound() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
-        Integer[] array = {42};
+    void inOrderReturnsSortedValues() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        int[] values = {8, 3, 10, 1, 6, 14, 4, 7, 13};
 
-        assertEquals(-1, bs.binarySearch(array, 5));
+        for (int v : values) bst.insert(v);
+
+        List<Integer> inOrder = bst.inOrder();
+
+        List<Integer> expected = Arrays.stream(values)
+                .boxed()
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+
+        assertEquals(expected, inOrder);
     }
 
-    /**
-     * Deze test is nodig om te controleren of de binaire zoekopdracht ook met strings werkt (het is een generieke implementatie immers)
-     */
     @Test
-    void testBinarySearchWithStrings() {
-        BinarySearch<String> bs = new BinarySearch<>();
-        String[] array = {"apple", "banana", "cherry", "date"};
+    void worstCaseShapeStillBehavesCorrectly_sortedInsert() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        assertEquals(1, bs.binarySearch(array, "banana"));
-        assertEquals(-1, bs.binarySearch(array, "orange"));
-    }
-
-    /**
-     * Deze test is nodig om te controleren of de binaire zoekopdracht ook met negatieve getallen ook werkt
-     */
-    @Test
-    void testBinarySearchNegativeNumbers() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
-        Integer[] array = {-10, -5, 0, 5, 10};
-
-        assertEquals(0, bs.binarySearch(array, -10));
-        assertEquals(1, bs.binarySearch(array, -5));
-        assertEquals(3, bs.binarySearch(array, 5));
-    }
-
-    /** Grote datasets testen
-     *  Deze tests testen hoe de binaire zoekopdracht omgaat met grote datasets.
-     */
-    @Test
-    void testLargeSortedArrayFound() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
-
-        int size = 1_000_000; // 1mil elements
-        Integer[] array = new Integer[size];
-
-        // sorted waardes
-        for (int i = 0; i < size; i++) {
-            array[i] = i * 2;
+        for (int i = 1; i <= 20; i++) {
+            bst.insert(i); // worst-case (scheef) bij simpele BST
         }
 
-        // 1ste element
-        assertEquals(0, bs.binarySearch(array, 0));
+        assertEquals(20, bst.size());
+        assertTrue(bst.contains(1));
+        assertTrue(bst.contains(20));
+        assertFalse(bst.contains(999));
 
-        // Mid element
-        int middleIndex = size / 2;
-        int middleValue = array[middleIndex];
-        assertEquals(middleIndex, bs.binarySearch(array, middleValue));
+        // inOrder moet precies 1..20 zijn
+        List<Integer> expected = new ArrayList<>();
+        for (int i = 1; i <= 20; i++) expected.add(i);
 
-        // Last element
-        int lastIndex = size - 1;
-        int lastValue = array[lastIndex];
-        assertEquals(lastIndex, bs.binarySearch(array, lastValue));
-
-        //Een paar random indices in stappen van 10k om het redelijk performant te houden
-        for (int i = 0; i < size; i += 10_000) {
-            int value = array[i];
-            assertEquals(i, bs.binarySearch(array, value));
-        }
+        assertEquals(expected, bst.inOrder());
+        assertEquals(1, bst.findMin());
+        assertEquals(20, bst.findMax());
     }
 
     @Test
-    void testLargeArrayNotFoundSimple() {
-        BinarySearch<Integer> bs = new BinarySearch<>();
+    void largeTree_randomInsert_containsAndInOrderAreCorrect() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        int size = 1_000_000;
-        Integer[] array = new Integer[size];
+        int n = 10_000;
+        Random rnd = new Random(12345);
 
-        for (int i = 0; i < size; i++) {
-            array[i] = i * 2;
+        // use a Set so we know how many uniques we inserted
+        Set<Integer> inserted = new HashSet<>(n);
+        while (inserted.size() < n) {
+            inserted.add(rnd.nextInt(200_000));
         }
 
-        assertEquals(-1, bs.binarySearch(array, 1));
-        assertEquals(-1, bs.binarySearch(array, 999_999));
-        assertEquals(-1, bs.binarySearch(array, 123_457));
+        for (int v : inserted) bst.insert(v);
+
+        assertEquals(inserted.size(), bst.size());
+
+        // spot-check: all inserted values should be found
+        int checks = 200;
+        Iterator<Integer> it = inserted.iterator();
+        for (int i = 0; i < checks && it.hasNext(); i++) {
+            assertTrue(bst.contains(it.next()));
+        }
+
+        // inOrder should be sorted and contain exactly all inserted values
+        List<Integer> inOrder = bst.inOrder();
+        List<Integer> expected = inserted.stream().sorted().collect(Collectors.toList());
+
+        assertEquals(expected, inOrder);
     }
 }
