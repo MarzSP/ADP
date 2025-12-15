@@ -10,15 +10,25 @@ Er zijn generics gebruikt om de hashtable flexibel te maken voor verschillende t
 In het beste geval is de time complexity O(1), in het slechtste geval is het O(n).
 
 Per functie: 
-- hash(K): Maakt een geldige hashwaarde voor een gegeven key. Dit is O(1). <br><br>
+- hash(K): Maakt een geldige hashwaarde voor een gegeven key. Dit is O(1). 
 
-- FindPlace(K): Zoekt naar de juiste index om een key op te slaan of te vinden. In het beste geval O(1) wanneer er geen collisions zijn. In het slechtste geval O(n) wanneer er veel collisions zijn en de hashtable bijna vol is, waardoor er veel lineair gezocht moet worden naar een vrije index.<br><br>
 
-- put(K key, V value): In het beste geval O(1) wanneer er geen collisions zijn omdat de hashfunctie direct naar de juiste index wijst. In het slechtste geval O(n) wanneer er veel collisions zijn en de hashtable bijna vol is, waardoor er veel lineair gezocht moet worden naar een vrije index.<br><br>
+- FindIndex(Key): In het beste geval is de time complexity O(1) wanneer de key direct op de berekende hash-index staat.
+  In het slechtste geval is de time complexity O(n) wanneer er veel collisions zijn en er lineair door de array moet worden gezocht.
+
+
+- findInsertIndex(K key): 
+In het beste geval is de time complexity O(1) wanneer de berekende hash-index direct beschikbaar is.
+In het slechtste geval is de time complexity O(n) bij veel collisions, waardoor meerdere opeenvolgende index moeten worden gecontroleerd.
+
+
+- put(K key, V value): In het beste geval is de time complexity O(1) wanneer er geen collisions optreden en geen resize nodig is.
+  In het slechtste geval is de time complexity O(n). Dit kan optreden wanneer er veel collisions zijn of wanneer de load factor groter wordt dan 0.75, waardoor de hashtable wordt vergroot en alle bestaande elementen opnieuw gehasht moeten worden.
+
 
 - V get(K key): Zoekt naar de value die hoort bij de gegeven key. In het beste geval O(1) wanneer er geen collisions zijn. In het slechtste geval O(n) wanneer er veel collisions zijn en de hashtable bijna vol is, waardoor er veel lineair gezocht moet worden naar de juiste index.<br><br>
 
-- V remove(K key): Zoekt naar de key K en verwijdert de value die daar bij hoort. In het beste geval O(1) wanneer er geen collisions zijn. In het slechtste geval O(n) wanneer er veel collisions zijn en de hashtable bijna vol is, waardoor er veel lineair gezocht moet worden naar de juiste index.<br><br>
+- V remove(K key): Zoekt naar de key K en verwijdert de value die daar bij hoort. In het beste geval O(1) wanneer de key meteen gevonden wordt. In het slechtste geval O(n) wanneer er veel collisions zijn en de hashtable bijna vol is, waardoor er veel lineair gezocht moet worden naar de juiste index.Na resize moet de linear-probe keten worden gerepareerd, dus alle opeenvolgende elementen na het verwijderde element worden opnieuw gehashed totdat een lege plek is bereikt.
 
 - containsKey(K key): Controleert of de hashtable de opgegeven key heeft. In het beste geval O(1) wanneer er geen collisions zijn. In het slechtste geval O(n) wanneer er veel collisions zijn en de hashtable bijna vol is, waardoor er veel lineair gezocht moet worden naar de juiste index.<br><br>
 
@@ -26,6 +36,6 @@ Per functie:
 
 
 ### Verbeterpunten
-- Momenteel groeit de hashtable niet wanneer deze vol raakt. Dit kan worden opgelost met rezising waar een nieuwe grotere array wordt aangemaakt en alle bestaande key-value paren worden overgezet. Dit is in deze implmenentatie niet gedaan om het als een zuivere hashtable implementatie te houden.
-- De hashtable gebruikt linear probing om collisions op te lossen, wat kan leiden tot clustering en verminderde prestaties bij veel collisions. Andere methodes zijn bijvoorbeeld separate chaining (het linkedList idee) of quadratic probing waarin er een kwadratische sprong wordt gemaakt bij een collision.
-
+- De hashtable gebruikt linear probing om collisions op te lossen, wat kan leiden tot primary clustering en verminderde prestaties bij veel collisions. Andere methodes zijn bijvoorbeeld separate chaining (het linkedList idee) of quadratic probing waarin er een kwadratische sprong wordt gemaakt bij een collision.
+- De hashtable groeit automatisch wanneer de load factor groter is dan 0.75. Maar de table verkleint niet als er veel waarden worden removed. Dus een verbeterpunt zou zijn ook een grens te hebben voor het verkleinen van de hashtable wanneer de load factor onder een drempel komt, zoals 0.25, met rehashing.
+- De load factor is nu hardcoded maar dit kan dus ook een parameter zijn die de gebruiker kan instellen bij het maken van de hashtable.
