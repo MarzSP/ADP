@@ -1,5 +1,11 @@
 package app.searching;
 
+/**
+ * Demo van de BinarySearchTree class
+ * Laat zien hoe de binaire zoekboom werkt: invoegen, zoeken, min/max vinden, grootte en in-order traversals
+ * TC: varieert per operatie, meestal O(h) met h de hoogte van de boom
+ * SC: O(1) voor de meeste operaties, O(n) voor in-order traversals
+ */
 public class BSTDemo {
 
     public static void main(String[] args) {
@@ -8,7 +14,7 @@ public class BSTDemo {
 
         int[] values = { 8, 3, 10, 1, 6, 14, 4, 7, 13 };
 
-        System.out.println("Insert values:");
+        System.out.println("Insert values into BST:");
         for (int v : values) {
             System.out.print(v + " ");
             bst.insert(v);
