@@ -24,7 +24,7 @@ class BinarySearchTreeTest {
     }
 
     @Test
-    void sizeStartsAtZeroAndIncreasesOnUniqueInsert() {
+    void sizeStartsAtZeroAndIncreasesOnUqInsert() {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
         assertEquals(0, bst.size());
@@ -111,13 +111,13 @@ class BinarySearchTreeTest {
     }
 
     @Test
-    void largeTree_randomInsert_containsAndInOrderAreCorrect() {
+    void largeTreeRandomInsertContainsAndInOrderAreCorrect() {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
         int n = 10_000;
         Random rnd = new Random(12345);
 
-        // use a Set so we know how many uniques we inserted
+        // gebruik Set zodat we weten hoeveel unieke waarden we hebben ingevoegd
         Set<Integer> inserted = new HashSet<>(n);
         while (inserted.size() < n) {
             inserted.add(rnd.nextInt(200_000));
@@ -127,14 +127,14 @@ class BinarySearchTreeTest {
 
         assertEquals(inserted.size(), bst.size());
 
-        // spot-check: all inserted values should be found
+        // alle inserted waarden moeten gevonden worden
         int checks = 200;
         Iterator<Integer> it = inserted.iterator();
         for (int i = 0; i < checks && it.hasNext(); i++) {
             assertTrue(bst.contains(it.next()));
         }
 
-        // inOrder should be sorted and contain exactly all inserted values
+        // inOrder moet alle waarden in gesorteerde volgorde teruggeven
         List<Integer> inOrder = bst.inOrder();
         List<Integer> expected = inserted.stream().sorted().collect(Collectors.toList());
 

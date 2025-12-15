@@ -63,7 +63,7 @@ Als de boom scheef is, loop je langs een hele ketting.
 Altijd O(n)
 Elke node wordt precies één keer bezocht.
 
-Best case vs Worst case
+--Best case vs Worst case
 
 Het verschil tussen best en worst case komt neer op de vorm van de boom:
 
@@ -76,3 +76,25 @@ Invoegen en zoeken gedragen zich als een linked list: je doet ~n stappen.
 Een klassiek worst-case voorbeeld is het invoegen van waarden in oplopende volgorde:
 1, 2, 3, 4, 5, ...
 Dan komt elke nieuwe waarde steeds “helemaal rechts”.
+
+# Verbeter punten
+- Boom groeit scheef bij ongunstig invoer. Het wordt een soort LinkedList. Verbetering? self-balancing (AVL) gebruiken 
+- Ik negeer duplicate waarden omdat dit een eenvoudige BST is gericht op uitwerken van de structuur.
+Het zou een optie zijn om dit juist bij te houden zodat je weet hoe vaak een waarde is ingevoerd.
+ en mogelijke verbetering zou zijn om een count bij te houden in elke node. Bijv:
+
+````java
+class Node {
+    int value;
+    int countDuplicates; // duplicates: aantal keer dat deze waarde is ingevoegd
+    Node left;
+    Node right;
+
+    Node(int value) {
+        this.value = value;
+        this.countDuplicates = 1; // initialiseer count op 1
+        this.left = null;
+        this.right = null;
+    }
+}
+````

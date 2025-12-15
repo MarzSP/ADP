@@ -15,7 +15,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
     private int size;
 
     /**
-     * TC: O(1)
+     * TC: O(h) met h de hoogte van de boom
      * SC: O(1)
      * @param value toe te voegen waarde
      */
