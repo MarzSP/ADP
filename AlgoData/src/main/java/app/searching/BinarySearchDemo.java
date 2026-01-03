@@ -47,7 +47,7 @@ public class BinarySearchDemo {
     }
 
     /**
-     * Voert een binary search uit en print het resultaat.
+     * voert binary search uit en toont resultaat
      */
     private static void demoSearch(int[] array, int target) {
         int index = BinarySearch.binarySearch(array, target);
@@ -62,7 +62,7 @@ public class BinarySearchDemo {
     }
 
     /**
-     * Voert binary search uit en meet de execution time.
+     * Voert binary search uit met execution time meting
      */
     private static void demoTimedSearch(int[] array, int target) {
         long start = System.nanoTime();
