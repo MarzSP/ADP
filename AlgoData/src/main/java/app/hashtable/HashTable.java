@@ -102,7 +102,7 @@ public class HashTable<K, V> implements iHashable<K, V> {
 
     /**
      * Voegt een key-value paar toe of overschrijft een bestaande key.
-     * TC: Best O(1)  Worst O(n) bij resize of collisions
+     * TC: Best O(1) Worst O(n) bij resize of collisions
      * SC: O(1)
      */
     @Override

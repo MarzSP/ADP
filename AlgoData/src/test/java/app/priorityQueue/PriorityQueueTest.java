@@ -42,7 +42,7 @@ class PriorityQueueTest {
         assertNull(pq.dequeue());
     }
 
-    // El met laagste nr komt eerst uit de queue
+    // Element met laagste nr komt eerst uit de queue
     @Test
     void differentPrioHighestPrioFirst() {
         iPriorityQueue<String> pq = new PriorityQueue<>();
@@ -69,6 +69,25 @@ class PriorityQueueTest {
         assertEquals("Curie", pq.dequeue());
         assertEquals("Galileo", pq.dequeue());
     }
+
+    @Test
+    void updatePriorityAffectsOnlyOneDuplicate() {
+        PriorityQueue<String> pq = new PriorityQueue<>();
+        //Duplicaat met zelfde prio
+        pq.enqueue("Turing", 1);
+        pq.enqueue("Turing", 1);
+
+        assertTrue(pq.updatePriority("Turing", 5));
+        assertEquals(2, pq.size());
+
+        // Eerst 'Turing' met prioriteit 1
+        assertEquals("Turing", pq.dequeue());
+
+        // Daarna updated 'Turing' met prioriteit 5
+        assertEquals("Turing", pq.dequeue());
+        assertTrue(pq.isEmpty());
+    }
+
 
     //Vind waarde ongeacht in welke prio die zit
     @Test

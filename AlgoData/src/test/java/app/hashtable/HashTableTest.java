@@ -20,12 +20,12 @@ public class HashTableTest {
     }
 
 
-    //Deze test is nodig om te controleren of het opvragen van een niet-bestaande key wordt afgehandeld
+    //Deze test is nodig om te controleren of het opvragen van een niet-bestaande key wordt afgehandeld (b in dit geval)
     @Test
     void testGetUnknownKeyReturnsNull() {
         HashTable<String, Integer> table = new HashTable<>();
         table.put("a", 1);
-        assertNull(table.get("b")); // b is nooit toegevoegd, alleen a
+        assertNull(table.get("b"));
     }
 
     // Deze test is nodig omdat het overschrijven van een bestaande key de size van de hashtable niet mag vergrooten
