@@ -26,9 +26,9 @@ public class HashTable<K, V> implements iHashable<K, V> {
      * SC: O(1)
      */
     private int hash(K key, int length) {
-        // & 0x7fffffff maakt het positief (veiliger dan Math.abs bij MIN_VALUE)
-        return (key.hashCode() & 0x7fffffff) % length;
+        return Math.abs(key.hashCode()) % length;
     }
+
 
     private int hash(K key) {
         return hash(key, keys.length);

@@ -182,7 +182,7 @@ class PriorityQueueTest {
     }
 
     /**
-     * Demo test t.b.v verbeterpunt: Map
+     * Demo test t.b.v verbeterpunt: gebruik een Map
      * Deze test laat zien dat enqueue trager wordt wanneer er veel verschillende prioriteiten zijn
      *
      * Vergelijken twee situaties:

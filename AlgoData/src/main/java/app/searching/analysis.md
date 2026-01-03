@@ -1,100 +1,81 @@
-## BST Analyse
-Ik heb een Binary Search Tree (BST) geïmplementeerd met een Node class.
-Elke node bevat een value en verwijzingen naar left en right.
+## Binary Search Analyse
 
-De BST volgt deze regel:
+Ik heb een binary search geïmplementeerd in de class BinarySearch.
+Binary search werkt op een gesorteerde array (oplopend). In plaats van 1 voor 1 te zoeken, kijkt het algoritme steeds naar het midden van het zoekgebied.
 
-- links staan waarden kleiner dan de node
+De regel is:
 
-- rechts staan waarden groter dan de node
+- is target gelijk aan het midden? dan gevonden
 
-Hierdoor kan ik efficiënt invoegen en zoeken zonder eerst een lijst te sorteren.
+- is target kleiner dan het midden? dan zoek verder in de linker helft
 
+- is target groter dan het midden? dan zoek verder in de rechter helft
 
-### Functies in BST
+Hierdoor wordt het zoekgebied elke stap gehalveerd.
 
-**insert(value)**: voegt een waarde toe op de juiste plek
+## Functies in BinarySearch
 
-**contains(value)**: zoekt of een waarde aanwezig is
+- binarySearch(int[] a, int target):
+Zoekt 'target' in een gesorteerde array en geeft de index terug, of -1 als het element niet bestaat.
 
-**size()**: geeft het aantal nodes terug
+### Time Complexity
 
-**findMin()**: loopt helemaal naar links voor de kleinste waarde
+Bij binary search hangt de performance af van hoeveel keer je de array kunt halveren.
 
-**findMax()**: loopt helemaal naar rechts voor de grootste waarde
-
-**inOrder()**: traversal die alle waarden in gesorteerde volgorde teruggeeft
-
-
-#### Time Complexity
-
-Bij een BST hangt de performance vooral af van de hoogte van de boom (h):
-
-Als de boom gebalanceerd is: h ≈ log n
-
-Als de boom scheef is (bijv. oplopend ingevoerd): h ≈ n
-
-**insert(value)**
-
+Elke iteratie halveert het zoekgebied:
 Best case: O(1)
-Bijvoorbeeld: boom is leeg (root wordt direct gezet) of de waarde kan direct als kind geplaatst worden.
+Als target meteen gelijk is aan het midden-element bij de eerste vergelijking.
 
-Worst case: O(n)
-Als de boom een “linked list” wordt (scheef), moet je langs bijna alle nodes.
+Worst case: O(log n)
+Als target niet aanwezig is, of pas na meerdere halveringen gevonden wordt.
+Dan doe je ongeveer log2(n) stappen.
 
-**contains(value)**
 
-Best case: O(1)
-Als de target gelijk is aan de root.
+Het verschil zit in wanneer je de waarde vindt (of niet vindt):
 
-Worst case: O(n)
-Als de boom scheef is en je moet bijna alles aflopen.
+Best case: 1 vergelijking (midden is raak) dus constant.
 
-**findMin() en findMax()**
+Worst case: meerdere vergelijkingen, telkens halveren dus groeit langzaam mee met log n.
 
-Best case: O(1)
-Als de root al de min/max is (bijv. geen linker of rechter kind).
+Dus: binary search schaalt goed, omdat de dataset steeds wordt gehalveerd.
 
-Worst case: O(n)
-Als de boom scheef is, loop je langs een hele ketting.
+### Execution time:
 
-**inOrder()**
+In BinarySearchDemo meet ik de uitvoeringstijd met System.nanoTime().
 
-Altijd O(n)
-Elke node wordt precies één keer bezocht.
+Belangrijk hierbij:
 
---Best case vs Worst case
+Voor een kleine array is het verschil nauwelijks zichtbaar.
 
-Het verschil tussen best en worst case komt neer op de vorm van de boom:
+Bij een grote array zie je dat zoeken nog steeds snel blijft, omdat het aantal stappen beperkt blijft tot ongeveer log2(n).
 
-Best/average case (meer gebalanceerd):
-Invoegen en zoeken volgen ongeveer een pad van lengte log n.
+Execution time: groei is logaritmisch.
 
-Worst case (scheef):
-Invoegen en zoeken gedragen zich als een linked list: je doet ~n stappen.
+## Verbeterpunten:
+1) Voorwaarde: array moet gesorteerd zijn
 
-Een klassiek worst-case voorbeeld is het invoegen van waarden in oplopende volgorde:
-1, 2, 3, 4, 5, ...
-Dan komt elke nieuwe waarde steeds “helemaal rechts”.
+Binary search werkt alleen correct als de array oplopend gesorteerd is. Als de data nog niet gesorteerd is, moet je eerst sorteren.
+Sorteren kost meestal O(n log n) en kan dus “duurder” zijn dan de zoekactie zelf.
 
-# Verbeter punten
-- Boom groeit scheef bij ongunstig invoer. Het wordt een soort LinkedList. Verbetering? self-balancing (AVL) gebruiken 
-- Ik negeer duplicate waarden omdat dit een eenvoudige BST is gericht op uitwerken van de structuur.
-Het zou een optie zijn om dit juist bij te houden zodat je weet hoe vaak een waarde is ingevoerd.
- en mogelijke verbetering zou zijn om een count bij te houden in elke node. Bijv:
+Verbetering:
 
-````java
-class Node {
-    int value;
-    int countDuplicates; // duplicates: aantal keer dat deze waarde is ingevoegd
-    Node left;
-    Node right;
+- Als er veel zoekacties zijn: sorteer één keer en zoek daarna vaak.
 
-    Node(int value) {
-        this.value = value;
-        this.countDuplicates = 1; // initialiseer count op 1
-        this.left = null;
-        this.right = null;
-    }
-}
-````
+- Als er weinig zoekacties zijn en data verandert steeds: kan andere datastructuur kan beter zijn (bijv. HashMap want O(1).
+
+2) Iteratief i.p.v. recursief
+
+Mijn implementatie is iteratief. Dat voorkomt overhead van extra function calls en stack usage.
+Dit is klein verschil, maar wel goed voor performance en eenvoud.
+
+3) Mid-berekening overflow-proof
+
+De manier van berekenen van mid:
+
+left + (right - left) / 2
+
+In plaats van:
+
+(left + right) / 2
+
+Dit voorkomt overflow bij grote indices.
