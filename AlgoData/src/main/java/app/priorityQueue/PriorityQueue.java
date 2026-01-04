@@ -4,8 +4,9 @@ import java.util.LinkedList;
 public class PriorityQueue<T> implements iPriorityQueue<T> {
 
     /**
-     * Interne bucket:
-     * één prioriteit met een FIFO-lijst van waarden
+     * Interne bucket: een prio met een FIFO-lijst van waarden
+     * TC: O(1) voor add/remove aan begin/eind lijst
+     * SC: O(n) voor n elementen in de lijst
      */
     private static class Bucket<T> {
         int priority;
@@ -17,16 +18,22 @@ public class PriorityQueue<T> implements iPriorityQueue<T> {
         }
     }
 
-    private Bucket<T> head; // bucket met hoogste prioriteit
+    private Bucket<T> head;
     private int size = 0;
 
+    /**
+     * Voeg een nieuw element toe aan de queue met een prio
+     * TC: O(n) in het slechtste geval (zoeken juiste plek)
+     * SC: O(1) extra ruimte
+     * @param value waarde om op te slaan
+     * @param priority prio
+     */
     @Override
     public void enqueue(T value, int priority) {
         if (value == null) {
             throw new IllegalArgumentException("value mag niet null zijn");
         }
 
-        // lege queue
         if (head == null) {
             head = new Bucket<>(priority);
             head.values.add(value);
@@ -53,20 +60,25 @@ public class PriorityQueue<T> implements iPriorityQueue<T> {
             current = current.next;
         }
 
-        // bucket met zelfde prioriteit gevonden
+        // bucket met zelfde prio gevonden
         if (current != null && current.priority == priority) {
             current.values.add(value);
         } else {
-            // nieuwe bucket invoegen
             Bucket<T> bucket = new Bucket<>(priority);
             bucket.values.add(value);
             bucket.next = current;
             previous.next = bucket;
         }
-
         size++;
     }
 
+    /**
+     * Haalt en verwijdert het element met de hoogste prioriteit.
+     * Bij gelijke prioriteit wordt FIFO-volgorde gebruikt.
+     * TC: O(1)
+     * SC: O(1)
+     * @return
+     */
     @Override
     public T dequeue() {
         if (head == null) {
@@ -83,12 +95,23 @@ public class PriorityQueue<T> implements iPriorityQueue<T> {
         return value;
     }
 
+    /**
+     * TC: O(1)
+     * SC: O(1)
+     * @return waarde || null als leeg
+     */
     @Override
     public T peek() {
         if (head == null) return null;
         return head.values.getFirst();
     }
 
+    /**
+     * TC: O(n) worst case
+     * SC: O(1)
+     * @param value
+     * @return true als aanwezig
+     */
     @Override
     public boolean contains(T value) {
         for (Bucket<T> b = head; b != null; b = b.next) {
@@ -99,6 +122,12 @@ public class PriorityQueue<T> implements iPriorityQueue<T> {
         return false;
     }
 
+    /**
+     * TC: O(n) worst case
+     * SC: O(1)
+     * @param value  te verwijderen waarde
+     * @return true als gevonden + verwijderd
+     */
     @Override
     public boolean remove(T value) {
         Bucket<T> previous = null;
@@ -125,9 +154,15 @@ public class PriorityQueue<T> implements iPriorityQueue<T> {
         return false;
     }
 
+    /**
+     * TC: O(n) worst case
+     * SC: O(1)
+     * @param value  waarvan de prio wordt aangepast
+     * @param newPriority nieuwe prio
+     * @return true als gevonden + bijgewerkt
+     */
     @Override
     public boolean updatePriority(T value, int newPriority) {
-        // Eerst verwijderen
         if (!remove(value)) {
             return false;
         }
