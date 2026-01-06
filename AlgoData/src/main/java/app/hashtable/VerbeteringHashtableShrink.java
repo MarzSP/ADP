@@ -9,7 +9,7 @@ public class VerbeteringHashtableShrink<K, V> implements iHashable<K, V> {
 
     private static final int DEFAULT_CAPACITY = 16;
     private static final double MAX_LOAD_FACTOR = 0.75;
-    private static final double MIN_LOAD_FACTOR = 0.25; // 👈 verbetering
+    private static final double MIN_LOAD_FACTOR = 0.25; // Verbetering: nieuwe minimale load factor
 
     private Object[] keys;
     private Object[] values;

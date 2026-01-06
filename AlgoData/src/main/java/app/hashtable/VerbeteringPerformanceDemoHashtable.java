@@ -3,7 +3,7 @@ package app.hashtable;
 /** Verbetering:
  * De hashtable verkleint nu bij een lage load factor, waardoor probe-routes korter blijven. Dit levert in de demo ongeveer 15–20% performancewinst op.
  *
- * Ik vul de hashtable met 1000 elementen en verwijder bijna alles tot er nog 10 over zijn
+ * De hashtable krijgt 1000 elementen (dan heeft de tabel een grootte van 2048) en verwijder bijna alles tot er nog 10 over zijn
  * Meet daarna get(), zodat het effect van verkleinen bij een lage load factor te zien is
  *
  * Resultaten 1ste run:
