@@ -9,14 +9,16 @@ import java.util.Arrays;
  * Zoekwaarde 10 gevonden op index 4
  * Zoekwaarde 9 niet gevonden
  *
- * Best case scenario
+ * Best case scenario:
  * Zoekwaarde 8 gevonden op index 3
  *
- * Worst case scenario
+ * Worst case scenario:
  * Zoekwaarde 15 niet gevonden
  *
- * --- Grotere dataset ---
+ * Grotere dataset:
  * Zoekwaarde 999999 gevonden op index 999999 (tijd: 1600 ns)
+ *
+ * Negative number search:
  * Zoekwaarde -1 niet gevonden (tijd: 2800 ns)
  */
 public class BinarySearchDemo {
