@@ -66,7 +66,6 @@ Verbetering:
 2) Iteratief i.p.v. recursief
 
 Mijn implementatie is iteratief. Dat voorkomt overhead van extra function calls en stack usage.
-Dit is klein verschil, maar wel goed voor performance en eenvoud.
 
 3) Mid-berekening overflow-proof
 
@@ -74,8 +73,20 @@ De manier van berekenen van mid:
 
 left + (right - left) / 2
 
+
+Bijvoorbeeld:
+
+int left  = 1_800_000_000;
+
+int right = 2_000_000_000;
+
+mid = 1_900_000_000;
+
+
+
 In plaats van:
 
 (left + right) / 2
+mid = -247_483_648;
 
 Dit voorkomt overflow bij grote indices.
