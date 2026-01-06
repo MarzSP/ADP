@@ -6,6 +6,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testen van het functionele gedrag van de Graph class die wordt gebruikt in de Dijkstra implementatie.
+ * Gedrag van de Graph die wordt getest:
+ * Automatisch toevoegen van vertices
+ * Correct opslaan van edges in de adjacency list
+ * Gedrag bij onbekende vertices
+ * Richting van de graaf (directed gedrag)
+ * Negatieve gewichten worden geweigerd
+ */
 class GraphTest {
 
     @Test
