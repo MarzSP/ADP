@@ -8,7 +8,7 @@ public class PriorityQueue<T> implements iPriorityQueue<T> {
      * TC: O(1) voor add/remove aan begin/eind lijst
      * SC: O(n) voor n elementen in de lijst
      */
-    private static class Bucket<T> {
+    static class Bucket<T> {
         int priority;
         LinkedList<T> values = new LinkedList<>();
         Bucket<T> next;
