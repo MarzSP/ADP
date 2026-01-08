@@ -119,4 +119,35 @@ public class InsertionSortTest {
 
         assertArrayEquals(expected, array);
     }
+
+    static Integer[] nearlySorted(int n) {
+        Integer[] a = new Integer[n];
+        for (int i = 0; i < n; i++) a[i] = i;
+
+        // Maak 'm een beetje rommelig: 10 swaps
+        java.util.Random r = new java.util.Random(42);
+        for (int s = 0; s < 10; s++) {
+            int i = r.nextInt(n);
+            int j = r.nextInt(n);
+            Integer tmp = a[i];
+            a[i] = a[j];
+            a[j] = tmp;
+        }
+        return a;
+    }
+
+    @Test
+    void insertionSortBeforeOptimization() {
+        Integer[] a = nearlySorted(20_000);
+
+        InsertionSort<Integer> sort = new InsertionSort<>();
+        sort.sort(a);
+
+        System.out.println(
+                "AFTER -> comparisons=" + sort.getComparisons() +
+                        ", shifts=" + sort.getShifts() +
+                        ", whileChecks=" + sort.getWhileCount()
+        );
+    }
+
 }

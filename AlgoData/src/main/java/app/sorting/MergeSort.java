@@ -7,7 +7,11 @@ package app.sorting;
  * Space complexity: O(n) want extra arrays tijdens het splitsen/sorteren
  */
 public class MergeSort<T extends Comparable<T>> implements iSorting<T> {
+long mergeCalls = 0;
 
+public long getMergeCalls() {
+    return mergeCalls;
+}
     /**
      * TC: O(n log n)
      * @param array De array die gesorteerd moet worden.
@@ -27,6 +31,13 @@ public class MergeSort<T extends Comparable<T>> implements iSorting<T> {
         sort(left);
         sort(right);
 
+        //VERBETERING:
+      //  if (left[left.length - 1].compareTo(right[0]) <= 0) {
+        //    System.arraycopy(left, 0, array, 0, left.length);
+         //   System.arraycopy(right, 0, array, left.length, right.length);
+          //  return;
+        //}
+        mergeCalls++;
         merge(array, left, right);
     }
 

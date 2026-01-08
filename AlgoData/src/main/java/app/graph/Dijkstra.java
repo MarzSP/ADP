@@ -14,10 +14,8 @@ public class Dijkstra {
      * Berekent de kortste afstanden vanaf de start-vertex naar alle vertices
      */
     public static <Vertex> Map<Vertex, Integer> calculateShortestPaths(
+            Graph<Vertex> graph, Vertex start) {
 
-            Graph<Vertex> graph,
-            Vertex start
-    ) {
         if (graph.getVertices().isEmpty()) {
             throw new IllegalArgumentException("Graph empty");
         }
@@ -54,7 +52,6 @@ public class Dijkstra {
                 }
             }
         }
-
         return distances;
     }
 
