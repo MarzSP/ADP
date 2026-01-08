@@ -27,8 +27,8 @@ public class BinarySearchDemo {
 
         System.out.println("=== Binary Search Demo ===\n");
 
-        // 1. Basic voorbeeld
-        int[] smallArray = {2, 4, 6, 8, 10, 12, 14};
+        // 1. Basisvoorbeeld
+        Integer[] smallArray = {2, 4, 6, 8, 10, 12, 14};
         System.out.println("Array: " + Arrays.toString(smallArray));
         demoSearch(smallArray, 10); // bestaat
         demoSearch(smallArray, 9);  // bestaat niet
@@ -41,17 +41,17 @@ public class BinarySearchDemo {
         System.out.println("\n--- Worst case scenario ---");
         demoSearch(smallArray, 15);
 
-        // 4. Grotere dataset: voor performance
+        // 4. Grotere dataset: performance
         System.out.println("\n--- Grotere dataset ---");
-        int[] largeArray = createSortedArray(1_000_000);
+        Integer[] largeArray = createSortedArray(1_000_000);
         demoTimedSearch(largeArray, 999_999);
         demoTimedSearch(largeArray, -1);
     }
 
     /**
-     * voert binary search uit en toont resultaat
+     * Voert binary search uit en toont resultaat
      */
-    private static void demoSearch(int[] array, int target) {
+    private static <T extends Comparable<T>> void demoSearch(T[] array, T target) {
         int index = BinarySearch.binarySearch(array, target);
 
         if (index != -1) {
@@ -64,7 +64,7 @@ public class BinarySearchDemo {
     /**
      * Voert binary search uit met execution time meting
      */
-    private static void demoTimedSearch(int[] array, int target) {
+    private static <T extends Comparable<T>> void demoTimedSearch(T[] array, T target) {
         long start = System.nanoTime();
         int index = BinarySearch.binarySearch(array, target);
         long end = System.nanoTime();
@@ -72,20 +72,24 @@ public class BinarySearchDemo {
         long duration = end - start;
 
         if (index != -1) {
-            System.out.println("Zoekwaarde " + target +
-                    " gevonden op index " + index +
-                    " (tijd: " + duration + " ns)");
+            System.out.println(
+                    "Zoekwaarde " + target +
+                            " gevonden op index " + index +
+                            " (tijd: " + duration + " ns)"
+            );
         } else {
-            System.out.println("Zoekwaarde " + target +
-                    " niet gevonden (tijd: " + duration + " ns)");
+            System.out.println(
+                    "Zoekwaarde " + target +
+                            " niet gevonden (tijd: " + duration + " ns)"
+            );
         }
     }
 
     /**
-     * Maakt een gesorteerde array van 0 t/m size-1.
+     * Maakt een gesorteerde Integer-array van 0 t/m size-1
      */
-    private static int[] createSortedArray(int size) {
-        int[] result = new int[size];
+    private static Integer[] createSortedArray(int size) {
+        Integer[] result = new Integer[size];
         for (int i = 0; i < size; i++) {
             result[i] = i;
         }
