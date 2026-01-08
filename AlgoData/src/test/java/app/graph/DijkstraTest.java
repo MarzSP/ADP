@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DijkstraTest {
 
+    // Normaal scenario: test op kortste paden berekenen
     @Test
     void calculateShortestPathsSmallGraph() {
         Graph<String> graph = new Graph<>();
@@ -27,6 +28,7 @@ class DijkstraTest {
         assertEquals(5, dist.get("D")); // A->C->B->D = 2+1+2
     }
 
+    // Dijkstra kan niet werken op een lege graaf
     @Test
     void emptyGraphThrowsException() {
         Graph<String> graph = new Graph<>();
@@ -36,6 +38,7 @@ class DijkstraTest {
         );
     }
 
+    // Test afstand startnode naar zichzelf is altijd 0
     @Test
     void singleVertexGraphDistanceToSelfIsZero() {
         Graph<String> graph = new Graph<>();
@@ -48,6 +51,7 @@ class DijkstraTest {
         assertEquals(0, distances.get("A"));
     }
 
+    // Test bij meerdere paden en kiest de kortste
     @Test
     void multiplePathsShortestDistance() {
         Graph<String> graph = new Graph<>();
@@ -62,6 +66,7 @@ class DijkstraTest {
         assertEquals(2, distances.get("B"));
     }
 
+    // Test meerdere routes kortste route. Van A naar D is sowieso 4
     @Test
     void tieMultipleRoutesSameDistanceReturnDistance() {
         Graph<String> graph = new Graph<>();

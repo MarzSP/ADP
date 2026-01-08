@@ -22,17 +22,13 @@ public class DijkstraDemo {
 
         //execution time
         long startTime = System.nanoTime();
-        Map<Person, Integer> distances =
-                Dijkstra.calculateShortestPaths(graph, start);
+        Map<Person, Integer> distances = Dijkstra.calculateShortestPaths(graph, start);
         long endTime = System.nanoTime();
 
         //Print resultaat
         for (Map.Entry<Person, Integer> entry : distances.entrySet()) {
-            System.out.println(
-                    "Afstand van " + start + " naar " + entry.getKey() + " = " + entry.getValue()
-            );
+            System.out.println( "Afstand van " + start + " naar " + entry.getKey() + " = " + entry.getValue());
         }
-
         System.out.println("Execution time (ns): " + (endTime - startTime));
     }
 
