@@ -47,7 +47,7 @@ public class VerbeteringPerformanceDemoHashtable {
             table.remove(i);
         }
 
-        // Meet get() na veel removes (veel herhalen zodat het meetbaar is)
+        // Meet get() na veel removes: veel herhalen zodat het meetbaar is
         int repeats = 1_000_000;
 
         long start = System.nanoTime();

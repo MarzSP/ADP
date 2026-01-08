@@ -33,19 +33,19 @@ public class BinarySearchDemo {
         demoSearch(smallArray, 10); // bestaat
         demoSearch(smallArray, 9);  // bestaat niet
 
-        // 2. Best-case scenario: middelste element
+        // 2. Best case: middelste element
         System.out.println("\n--- Best case scenario ---");
         demoSearch(smallArray, 8);
 
-        // 3. Worst-case scenario: niet aanwezig
+        // 3. Worst case: niet aanwezig
         System.out.println("\n--- Worst case scenario ---");
         demoSearch(smallArray, 15);
 
         // 4. Grotere dataset: voor performance
         System.out.println("\n--- Grotere dataset ---");
         int[] largeArray = createSortedArray(1_000_000);
-        demoTimedSearch(largeArray, 999_999); // aanwezig
-        demoTimedSearch(largeArray, -1);      // niet aanwezig
+        demoTimedSearch(largeArray, 999_999);
+        demoTimedSearch(largeArray, -1);
     }
 
     /**
@@ -55,11 +55,9 @@ public class BinarySearchDemo {
         int index = BinarySearch.binarySearch(array, target);
 
         if (index != -1) {
-            System.out.println("Zoekwaarde " + target +
-                    " gevonden op index " + index);
+            System.out.println("Zoekwaarde " + target + " gevonden op index " + index);
         } else {
-            System.out.println("Zoekwaarde " + target +
-                    " niet gevonden");
+            System.out.println("Zoekwaarde " + target + " niet gevonden");
         }
     }
 
