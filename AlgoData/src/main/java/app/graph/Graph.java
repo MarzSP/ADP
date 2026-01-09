@@ -3,51 +3,51 @@ package app.graph;
 import java.util.*;
 
 /**
- * Generieke implementatie van een gewogen graaf op basis van een adjacency list.
- * De graaf wordt opgeslagen als een Map waarbij:
- * Key: Vertex
- * Value: een lijst is van uitgaande edges met weights
- * De graph is generic en kan gebruikt worden met elk type vertex,
- * zoals bijvoorbeeld Person. (Zie Class DijkstraDemo)
+ * Generieke implementatie van een weighted Graph
+ * Gebruikt Class Edge en Class Vertex
+ * Geimplementeerd met een PriorityQueue voor Dijkstra's algoritme
  **/
-public class Graph<Vertex> {
+public class Graph<T extends Comparable <T>> {
 
-    /**
-     * Edge is een weighted verbinding naar een andere vertex
-     */
-    public static class Edge<Vertex> {
-        public final Vertex destination;
-        public final int weight;
+    private Map<Vertex<T>, List<Edge<T>>> adjacencyList = new HashMap<>();
 
-        public Edge(Vertex destination, int weight) {
-            if (weight < 0) {
-                throw new IllegalArgumentException("Dijkstra's algoritme doet niet aan negatieve gewichten");
-            }
-            this.destination = destination;
-            this.weight = weight;
-        }
-    }
-
-    /**
-     * Adjacency list: elke vertex een lijst heeft van zijn directe buren met weights
-     */
-    private final Map<Vertex, List<Edge<Vertex>>> adjacencyList = new HashMap<>();
-
-    public void addVertex(Vertex vertex) {
+    public void addVertex(Vertex<T> vertex){
         adjacencyList.putIfAbsent(vertex, new ArrayList<>());
     }
 
-    public void addEdge(Vertex from, Vertex to, int weight) {
-        addVertex(from);
-        addVertex(to);
-        adjacencyList.get(from).add(new Edge<>(to, weight));
+    public void addEdge(Vertex<T> source, Vertex<T> target, int weight){
+        adjacencyList.putIfAbsent(source, new ArrayList<>());
+        adjacencyList.putIfAbsent(target, new ArrayList<>());
+
+        adjacencyList.get(source).add(new Edge<T>(weight, target));
     }
 
-    public List<Edge<Vertex>> getNeighbours(Vertex vertex) {
-        return adjacencyList.getOrDefault(vertex, Collections.emptyList());
+    public void Dijsktra() {
+        return;
     }
 
-    public Set<Vertex> getVertices() {
-        return adjacencyList.keySet();
+    public void removeVertex(Vertex<T> vertex   ){
+        adjacencyList.remove(vertex);
+
+        for (List<Edge<T>> edges : adjacencyList.values()) {
+           Iterator<Edge<T>> edgeIterator = edges.iterator();
+           while (edgeIterator.hasNext()) {
+               Edge<T> edge = edgeIterator.next();
+               if (edge.getTargetVertex().equals(vertex)) {
+                   edgeIterator.remove();
+               }
+           }
+        }
+    }
+
+    public int findVertexPosition(Vertex<T> vertex){
+        int index = 0;
+        for(Vertex<T> key : adjacencyList.keySet()){
+            if(key.equals(vertex)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
     }
 }

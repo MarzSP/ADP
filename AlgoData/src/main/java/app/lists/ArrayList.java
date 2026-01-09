@@ -93,7 +93,7 @@ public class ArrayList<T> implements iList<T> {
         elements[--size] = null;
         return removed;
     }
-//TODO : analyse from here and update anaysis.md
+
     /**
      * Geeft de grootte van de lijst terug
      * TC: O(1)

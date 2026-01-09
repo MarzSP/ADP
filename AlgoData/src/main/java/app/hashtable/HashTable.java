@@ -1,5 +1,7 @@
 package app.hashtable;
 
+import java.security.Key;
+
 /**
  * Generic hashtable implementatie met linear probing
  * - Collisions: linear probing
@@ -10,12 +12,12 @@ public class HashTable<K, V> implements iHashable<K, V> {
     private static final int DEFAULT_CAPACITY = 16;
     private static final double MAX_LOAD_FACTOR = 0.75;
 
-    private Object[] keys;
+    private K[] keys;
     private Object[] values;
     private int size;
 
     public HashTable() {
-        keys = new Object[DEFAULT_CAPACITY];
+        keys = new K[DEFAULT_CAPACITY];
         values = new Object[DEFAULT_CAPACITY];
         size = 0;
     }
@@ -56,7 +58,7 @@ public class HashTable<K, V> implements iHashable<K, V> {
         Object[] oldKeys = keys;
         Object[] oldValues = values;
 
-        keys = new Object[newCapacity];
+        keys = new K[newCapacity];
         values = new Object[newCapacity];
         size = 0;
 

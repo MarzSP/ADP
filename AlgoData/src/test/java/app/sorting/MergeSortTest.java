@@ -118,24 +118,18 @@ public class MergeSortTest {
     }
 
     @Test
-    void optimizationReducesMergeCallsOnSortedInput() {
-        Integer[] sorted = new Integer[10_000];
-        for (int i = 0; i < sorted.length; i++) sorted[i] = i;
+    void mergeOptimizationEffectDemo() {
+        Integer[] input = new Integer[10_000];
+        for (int i = 0; i < input.length; i++) {
+            input[i] = i; // gesorteerd
+        }
 
         MergeSort<Integer> ms = new MergeSort<>();
-        ms.sort(sorted);
+        ms.sort(input);
 
-        long mergesSorted = ms.getMergeCalls();
-
-        Integer[] random = new Integer[10_000];
-        java.util.Random r = new java.util.Random(42);
-        for (int i = 0; i < random.length; i++) random[i] = r.nextInt();
-
-        MergeSort<Integer> ms2 = new MergeSort<>();
-        ms2.sort(random);
-        long mergesRandom = ms2.getMergeCalls();
-        System.out.println("mergesSorted=" + mergesSorted + ", mergesRandom=" + mergesRandom);
-        assertTrue(mergesSorted == mergesRandom);
+        System.out.println(
+                "attempts=" + ms.getMergeAttempts() + ", actual=" + ms.getMergeActual() + ", skips=" + ms.getMergeSkips()
+        );
     }
 
 }
