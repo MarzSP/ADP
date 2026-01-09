@@ -40,7 +40,7 @@ public class Graph<T extends Comparable<T>> {
 
     /**
      * Voeg een vertex toe aan de graaf (in de adjacencyList) als deze nog niet bestaat
-     * @param vertex 
+     * @param vertex  toe te voegen vertex
      */
     public void addVertex(Vertex<T> vertex){
         if (findNode(vertex) == null) {
@@ -50,9 +50,9 @@ public class Graph<T extends Comparable<T>> {
 
     /**
      * Voeg een gerichte edge toe van source vertex naar target vertex met gegeven gewicht
-     * @param source
-     * @param target
-     * @param weight
+     * @param source bron vertex
+     * @param target doel vertex
+     * @param weight gewicht van de edge
      */
     public void addEdge(Vertex<T> source, Vertex<T> target, int weight) {
         addVertex(source);
@@ -69,7 +69,7 @@ public class Graph<T extends Comparable<T>> {
      * Returns afstanden met een double[] met Double.POSITIVE_INFINITY voor onbezochte vertices
      * Boolean[] houdt bij welke vertices al gedaan zijn
      * Double[] houdt de kortste afstanden bij
-     * @param startIndex
+     * @param startIndex beginpunt voor Dijkstra
      * @return distances from startIndex to all others
      */
     public double[] dijkstra(int startIndex) {
@@ -94,9 +94,9 @@ public class Graph<T extends Comparable<T>> {
     /**
      * Base case: currentIndex == -1. Dan zijn er geen bereikbare vertices meer
      * Recursive case: update afstanden van buren van currentIndex
-     * @param currentIndex 
-     * @param distance
-     * @param visited
+     * @param currentIndex  huidige vertex index
+     * @param distance   afstanden
+     * @param visited bezochte vertices
      */
     private void dijkstraRecursive(int currentIndex, double[] distance, boolean[] visited) {
         if (currentIndex == -1) return;
@@ -127,6 +127,12 @@ public class Graph<T extends Comparable<T>> {
         dijkstraRecursive(nextIndex, distance, visited);
     }
 
+    /**
+     * Zoek de index van de dichtstbijzijnde vertex die nog niet gedaan is
+     * @param distance afstanden
+     * @param done bezochte vertices
+     * @return bestIndex index van de dichtstbijzijnde onbezochte vertex
+     */
     private int findClosestNotDone(double[] distance, boolean[] done) {
         int bestIndex = -1;
         double bestDistance = Double.POSITIVE_INFINITY;
@@ -140,7 +146,10 @@ public class Graph<T extends Comparable<T>> {
         return bestIndex;
     }
 
-
+    /**
+     * Verwijder een vertex en alle edges die ernaar wijzen
+     * @param vertex te verwijderen vertex
+     */
     public void removeVertex(Vertex<T> vertex) {
         // verwijder de vertex zelf
         for (int i = 0; i < adjacencyList.size(); i++) {
