@@ -1,5 +1,11 @@
 package app.graph;
 
+/**
+ * Class voor Edges in een graaf
+ * De class omvat het gewicht en de target vertex van de edge
+ * Deze class bevat alleen de data van de edge
+ * @param <T>
+ */
 public class Edge<T> implements IEdge<T> {
 
     private int weight;

@@ -1,53 +1,65 @@
 package app.graph;
 
+import app.lists.LinkedList;
 import java.util.*;
 
-/**
- * Generieke implementatie van een weighted Graph
- * Gebruikt Class Edge en Class Vertex
- * Geimplementeerd met een PriorityQueue voor Dijkstra's algoritme
- **/
-public class Graph<T extends Comparable <T>> {
+public class Graph<T extends Comparable<T>> {
 
-    private Map<Vertex<T>, List<Edge<T>>> adjacencyList = new HashMap<>();
+    private final LinkedList<AdjNode> adjacencyList = new LinkedList<>();
+
+    private class AdjNode {
+        final Vertex<T> vertex;
+        final LinkedList<Edge<T>> edges = new LinkedList<>();
+
+        AdjNode(Vertex<T> vertex) {
+            this.vertex = vertex;
+        }
+    }
+
+    private AdjNode findNode(Vertex<T> vertex) {
+        for (int i = 0; i < adjacencyList.size(); i++) {
+            AdjNode n = adjacencyList.get(i);
+            if (Objects.equals(n.vertex, vertex)) return n;
+        }
+        return null;
+    }
 
     public void addVertex(Vertex<T> vertex){
-        adjacencyList.putIfAbsent(vertex, new ArrayList<>());
-    }
-
-    public void addEdge(Vertex<T> source, Vertex<T> target, int weight){
-        adjacencyList.putIfAbsent(source, new ArrayList<>());
-        adjacencyList.putIfAbsent(target, new ArrayList<>());
-
-        adjacencyList.get(source).add(new Edge<T>(weight, target));
-    }
-
-    public void Dijsktra() {
-        return;
-    }
-
-    public void removeVertex(Vertex<T> vertex   ){
-        adjacencyList.remove(vertex);
-
-        for (List<Edge<T>> edges : adjacencyList.values()) {
-           Iterator<Edge<T>> edgeIterator = edges.iterator();
-           while (edgeIterator.hasNext()) {
-               Edge<T> edge = edgeIterator.next();
-               if (edge.getTargetVertex().equals(vertex)) {
-                   edgeIterator.remove();
-               }
-           }
+        if (findNode(vertex) == null) {
+            adjacencyList.add(new AdjNode(vertex));
         }
     }
 
-    public int findVertexPosition(Vertex<T> vertex){
-        int index = 0;
-        for(Vertex<T> key : adjacencyList.keySet()){
-            if(key.equals(vertex)) {
-                return index;
+    public void addEdge(Vertex<T> source, Vertex<T> target, int weight) {
+        addVertex(source);
+        addVertex(target);
+
+        AdjNode src = findNode(source);
+        if (src != null) {
+            src.edges.add(new Edge<>(weight, target));
+        }
+    }
+
+    public void dijkstra() {
+        //make later dijkstra
+    }
+
+    public void removeVertex(Vertex<T> vertex) {
+        // verwijder de vertex zelf
+        for (int i = 0; i < adjacencyList.size(); i++) {
+            if (Objects.equals(adjacencyList.get(i).vertex, vertex)) {
+                adjacencyList.remove(i);
+                break;
             }
-            index++;
         }
-        return -1;
+        // Verwijder edges die naar de vertex wijzen
+        for (int i = 0; i < adjacencyList.size(); i++) {
+            LinkedList<Edge<T>> edges = adjacencyList.get(i).edges;
+            for (int j = edges.size() - 1; j >= 0; j--) {
+                if (Objects.equals(edges.get(j).getTargetVertex(), vertex)) {
+                    edges.remove(j);
+                }
+            }
+        }
     }
 }

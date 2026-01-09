@@ -77,7 +77,7 @@ public class LinkedList<T> implements iList<T> {
             current = current.next;
         }
 
-        return current.data;
+        return ((Node<T>) current).getData();
     }
     /**
      * Zet het opgegeven element op de opgegeven index
@@ -97,8 +97,8 @@ public class LinkedList<T> implements iList<T> {
             current = current.next;
         }
 
-        T oldValue = current.data;
-        current.data = element;
+        T oldValue = ((Node<T>) current).getData();
+        ((Node<T>) current).data = element;
         return oldValue;
     }
 
