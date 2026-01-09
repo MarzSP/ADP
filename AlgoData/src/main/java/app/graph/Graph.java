@@ -79,14 +79,14 @@ public class Graph<T extends Comparable<T>> {
         }
 
         double[] dist = new double[n];
-        boolean[] done = new boolean[n];
+        boolean[] visited = new boolean[n];
 
         Arrays.fill(dist, Double.POSITIVE_INFINITY);
         dist[startIndex] = 0.0;
 
-        int start = findClosestNotDone(dist, done);
+        int start = findClosestNotDone(dist, visited);
         // start should equal startIndex but using the find ensures consistent behavior
-        dijkstraRecursive(start, dist, done);
+        dijkstraRecursive(start, dist, visited);
 
         return dist;
     }
