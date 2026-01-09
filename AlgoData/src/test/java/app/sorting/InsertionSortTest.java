@@ -144,9 +144,7 @@ public class InsertionSortTest {
         sort.sort(a);
 
         System.out.println(
-                "AFTER -> comparisons=" + sort.getComparisons() +
-                        ", shifts=" + sort.getShifts() +
-                        ", whileChecks=" + sort.getWhileCount()
+                "AFTER -> comparisons=" + sort.getComparisons() + ", shifts=" + sort.getShifts() + ", whileChecks=" + sort.getWhileCount()
         );
     }
 

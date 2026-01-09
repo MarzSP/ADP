@@ -101,7 +101,7 @@ public class ArrayListTest {
      */
     @Test
     void testLargeAddResizing() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             list.add("v" + i);
         }
         assertEquals(100, list.size());

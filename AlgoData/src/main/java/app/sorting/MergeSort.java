@@ -7,23 +7,25 @@ package app.sorting;
  * Space complexity: O(n) want extra arrays tijdens het splitsen/sorteren
  */
 public class MergeSort<T extends Comparable<T>> implements iSorting<T> {
-long mergeCalls = 0;
+    long mergeAttempts = 0;
+    long mergeSkips = 0;
+    long mergeActual = 0;
 
-public long getMergeCalls() {
-    return mergeCalls;
-}
+    public long getMergeAttempts() { return mergeAttempts; }
+    public long getMergeSkips() { return mergeSkips; }
+    public long getMergeActual() { return mergeActual; }
+
     /**
      * TC: O(n log n)
      * @param array De array die gesorteerd moet worden.
      */
     @Override
     public void sort(T[] array) {
-        if (array.length < 2) {
-            return;
-        }
+        if (array.length < 2) return;
+
         int mid = array.length / 2;
 
-        // copyOfRange: nieuwe arrays aan voor de linker en rechter helft
+        // copyOfRange: maakt nieuwe arrays aan voor de linker en rechter helft
         T[] left = java.util.Arrays.copyOfRange(array, 0, mid);
         T[] right = java.util.Arrays.copyOfRange(array, mid, array.length);
 
@@ -31,13 +33,19 @@ public long getMergeCalls() {
         sort(left);
         sort(right);
 
-        //VERBETERING:
-      //  if (left[left.length - 1].compareTo(right[0]) <= 0) {
-        //    System.arraycopy(left, 0, array, 0, left.length);
-         //   System.arraycopy(right, 0, array, left.length, right.length);
+        mergeAttempts++;
+
+        // VERBETERING: als linkerhelft al volledig <= rechterhelft, skip merge
+        // Zonder verbetering: attempts=9999, actual=9999, skips=0
+        // Met verbetering: attempts=9999, actual=0, skips=9999
+        //if (left[left.length - 1].compareTo(right[0]) <= 0) {
+         //   mergeSkips++;
+           // System.arraycopy(left, 0, array, 0, left.length);
+          //  System.arraycopy(right, 0, array, left.length, right.length);
           //  return;
-        //}
-        mergeCalls++;
+       // }
+
+        mergeActual++;
         merge(array, left, right);
     }
 

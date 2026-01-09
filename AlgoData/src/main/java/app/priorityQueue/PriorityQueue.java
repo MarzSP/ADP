@@ -2,7 +2,6 @@ package app.priorityQueue;
 import java.util.LinkedList;
 
 public class PriorityQueue<T> implements iPriorityQueue<T> {
-
     /**
      * Interne bucket: een prio met een FIFO-lijst van waarden
      * TC: O(1) voor add/remove aan begin/eind lijst

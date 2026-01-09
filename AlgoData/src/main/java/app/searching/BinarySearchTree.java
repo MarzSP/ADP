@@ -8,7 +8,7 @@ import java.util.Objects;
  * Boom leeg? Dan maak eerst de root
  * Met vergelijken: kleiner naar links, groter naar rechts
  * Geen duplicaten mogelijk: als de waarde al bestaat kan de vergelijking de boom scheef maken. Vaste orde houden.
- * @param <T>
+ * @param <T> Generic type die comparable is
  */
 public class BinarySearchTree<T extends Comparable<T>> {
 

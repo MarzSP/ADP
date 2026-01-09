@@ -25,7 +25,7 @@ public class InsertionSort<T extends Comparable<T>> implements iSorting<T> {
 
         for (int i = 1; i < n; ++i) {
             T key = array[i];
-            //VERBETERING:
+            //VERBETERING: EARLY CONTINUE
             // BEFORE -> comparisons=143623, shifts=123624, whileChecks=19999
             // AFTER -> comparisons=143623, shifts=123624, whileChecks=16586
             //
