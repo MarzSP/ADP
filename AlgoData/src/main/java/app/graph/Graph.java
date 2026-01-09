@@ -26,11 +26,28 @@ public class Graph<T extends Comparable <T>> {
         return;
     }
 
-    public void removeVertex(){
-        return;
+    public void removeVertex(Vertex<T> vertex   ){
+        adjacencyList.remove(vertex);
+
+        for (List<Edge<T>> edges : adjacencyList.values()) {
+           Iterator<Edge<T>> edgeIterator = edges.iterator();
+           while (edgeIterator.hasNext()) {
+               Edge<T> edge = edgeIterator.next();
+               if (edge.getTargetVertex().equals(vertex)) {
+                   edgeIterator.remove();
+               }
+           }
+        }
     }
 
-    public void findIndex(){
-        return;
+    public int findVertexPosition(Vertex<T> vertex){
+        int index = 0;
+        for(Vertex<T> key : adjacencyList.keySet()){
+            if(key.equals(vertex)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
     }
 }
