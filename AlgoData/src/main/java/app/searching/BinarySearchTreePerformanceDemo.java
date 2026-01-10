@@ -7,8 +7,8 @@ package app.searching;
  * Resultaat:
  * Add balanced:  560800 ns (0 ms)
  * Add sorted:    598400 ns (0 ms)
- * Contains balanced: 7475800 ns (7 ms)
- * Contains sorted:   19684800 ns (19 ms)
+ * Contains balanced: 7475800 ns (7 ms) / 5ms / 5ms / 6ms / 7ms / 5ms
+ * Contains sorted:   19684800 ns (19 ms) / 19ms / 19ms / 17ms / 21ms / 17ms
  * ToSortedList balanced: 587500 ns (0 ms)
  * ToSortedList sorted:   288000 ns (0 ms)
  *

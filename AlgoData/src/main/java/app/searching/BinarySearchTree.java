@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public class BinarySearchTree<T extends Comparable<T>> {
 
-    private static class TreeNode<T> {
+   private static class TreeNode<T> {
         T value;
         TreeNode<T> left;
         TreeNode<T> right;
