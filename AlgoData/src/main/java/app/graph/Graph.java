@@ -78,17 +78,17 @@ public class Graph<T extends Comparable<T>> {
             throw new IllegalArgumentException("startIndex out of range");
         }
 
-        double[] dist = new double[n];
+        double[] distance = new double[n];
         boolean[] visited = new boolean[n];
 
-        Arrays.fill(dist, Double.POSITIVE_INFINITY);
-        dist[startIndex] = 0.0;
+        Arrays.fill(distance, Double.POSITIVE_INFINITY);
+        distance[startIndex] = 0.0;
 
-        int start = findClosestNotDone(dist, visited);
-        // start should equal startIndex but using the find ensures consistent behavior
-        dijkstraRecursive(start, dist, visited);
+        int start = findClosestNotVisited(distance, visited);
 
-        return dist;
+        dijkstraRecursive(start, distance, visited);
+
+        return distance;
     }
 
     /**
@@ -123,22 +123,22 @@ public class Graph<T extends Comparable<T>> {
         }
 
         visited[currentIndex] = true;
-        int nextIndex = findClosestNotDone(distance, visited);
+        int nextIndex = findClosestNotVisited(distance, visited);
         dijkstraRecursive(nextIndex, distance, visited);
     }
 
     /**
-     * Zoek de index van de dichtstbijzijnde vertex die nog niet gedaan is
+     * Zoek de index van de dichtstbijzijnde vertex die nog niet gedaan is (!visited[])
      * @param distance afstanden
-     * @param done bezochte vertices
+     * @param visited bezochte vertices
      * @return bestIndex index van de dichtstbijzijnde onbezochte vertex
      */
-    private int findClosestNotDone(double[] distance, boolean[] done) {
+    private int findClosestNotVisited(double[] distance, boolean[] visited) {
         int bestIndex = -1;
         double bestDistance = Double.POSITIVE_INFINITY;
 
         for (int i = 0; i < distance.length; i++) {
-            if (!done[i] && distance[i] < bestDistance) {
+            if (!visited[i] && distance[i] < bestDistance) {
                 bestDistance = distance[i];
                 bestIndex = i;
             }
