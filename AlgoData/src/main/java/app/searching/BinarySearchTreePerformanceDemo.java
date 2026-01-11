@@ -5,12 +5,12 @@ package app.searching;
  * Vaste input: gebalanceerde (150 values) en gesorteerd (150 values)
  * Runs: 1000
  * Resultaat:
- * Add balanced:  560800 ns (0 ms)
- * Add sorted:    598400 ns (0 ms)
- * Contains balanced: 7475800 ns (7 ms) / 5ms / 5ms / 6ms / 7ms / 5ms
- * Contains sorted:   19684800 ns (19 ms) / 19ms / 19ms / 17ms / 21ms / 17ms
- * ToSortedList balanced: 587500 ns (0 ms)
- * ToSortedList sorted:   288000 ns (0 ms)
+ * Add balanced:  6493500 ns (6 ms)
+ * Add sorted:    736300 ns (0 ms)
+ * Contains balanced: 7319100 ns (7 ms)
+ * Contains sorted:   20302500 ns (20 ms)
+ * ToSortedList balanced: 157200 ns (0 ms)
+ * ToSortedList sorted:   39100 ns (0 ms)
  *
  */
 public class BinarySearchTreePerformanceDemo {
@@ -40,7 +40,7 @@ public class BinarySearchTreePerformanceDemo {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
         long start = System.nanoTime();
         for (int value : values) {
-            bst.add(value);
+            bst.insert(value);
         }
         return System.nanoTime() - start;
     }
@@ -48,13 +48,13 @@ public class BinarySearchTreePerformanceDemo {
     private static long timeContains(int[] values) {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
         for (int value : values) {
-            bst.add(value);
+            bst.insert(value);
         }
 
         long start = System.nanoTime();
         for (int r = 0; r < 1000; r++) {
             for (int value : values) {
-                bst.contains(value);
+                bst.find(value);
             }
         }
         return System.nanoTime() - start;
@@ -63,7 +63,7 @@ public class BinarySearchTreePerformanceDemo {
     private static long timeToSortedList(int[] values) {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
         for (int value : values) {
-            bst.add(value);
+            bst.insert(value);
         }
 
         long start = System.nanoTime();

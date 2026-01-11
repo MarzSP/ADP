@@ -12,14 +12,14 @@ class BinarySearchTreeTest {
     void bstWithIntegers() {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        bst.add(50);
-        bst.add(30);
-        bst.add(70);
-        bst.add(20);
-        bst.add(40);
+        bst.insert(50);
+        bst.insert(30);
+        bst.insert(70);
+        bst.insert(20);
+        bst.insert(40);
 
-        assertTrue(bst.contains(40));
-        assertFalse(bst.contains(99));
+        assertTrue(bst.find(40));
+        assertFalse(bst.find(99));
 
         assertEquals(List.of(20, 30, 40, 50, 70), bst.TreeToSortedList());
     }
@@ -28,14 +28,14 @@ class BinarySearchTreeTest {
     void bstWithStrings() {
         BinarySearchTree<String> bst = new BinarySearchTree<>();
 
-        bst.add("M");
-        bst.add("C");
-        bst.add("T");
-        bst.add("A");
-        bst.add("E");
+        bst.insert("M");
+        bst.insert("C");
+        bst.insert("T");
+        bst.insert("A");
+        bst.insert("E");
 
-        assertTrue(bst.contains("E"));
-        assertFalse(bst.contains("B"));
+        assertTrue(bst.find("E"));
+        assertFalse(bst.find("B"));
 
         assertEquals(List.of("A", "C", "E", "M", "T"), bst.TreeToSortedList());
     }
@@ -44,7 +44,7 @@ class BinarySearchTreeTest {
     void emptyTree() {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        assertFalse(bst.contains(1));
+        assertFalse(bst.find(1));
         assertEquals(List.of(), bst.TreeToSortedList());
     }
 
@@ -52,8 +52,8 @@ class BinarySearchTreeTest {
     void duplicateIgnored() {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        assertTrue(bst.add(10));
-        assertFalse(bst.add(10));
+        assertTrue(bst.insert(10));
+        assertFalse(bst.insert(10));
 
         assertEquals(List.of(10), bst.TreeToSortedList());
     }
@@ -62,9 +62,9 @@ class BinarySearchTreeTest {
     void singleNodeTree() {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        bst.add(42);
+        bst.insert(42);
 
-        assertTrue(bst.contains(42));
+        assertTrue(bst.find(42));
         assertEquals(List.of(42), bst.TreeToSortedList());
     }
 
@@ -72,13 +72,13 @@ class BinarySearchTreeTest {
     void worstCaseScenarioTree() {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-        bst.add(1);
-        bst.add(2);
-        bst.add(3);
-        bst.add(4);
-        bst.add(5);
+        bst.insert(1);
+        bst.insert(2);
+        bst.insert(3);
+        bst.insert(4);
+        bst.insert(5);
 
-        assertTrue(bst.contains(5));
+        assertTrue(bst.find(5));
         assertEquals(List.of(1,2,3,4,5), bst.TreeToSortedList());
     }
 

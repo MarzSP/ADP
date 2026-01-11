@@ -2,6 +2,7 @@ package app.searching;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -32,7 +33,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
      * @param value toe te voegen waarde
      * @return true als waarde is toegevoegd
      */
-    public boolean add(T value) {
+    public boolean insert(T value) {
         Objects.requireNonNull(value, "waarde mag geen null zijn");
 
         // Boom leeg? dan wordt 1ste waarde root
@@ -73,7 +74,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
      * @param value te zoeken waarde
      * @return true als waarde is gevonden
      */
-    public boolean contains(T value) {
+    public boolean find(T value) {
         Objects.requireNonNull(value, "waarde mag geen null zijn");
 
         TreeNode<T> current = root;
@@ -94,32 +95,49 @@ public class BinarySearchTree<T extends Comparable<T>> {
     }
 
     /**
-     * In-order traversal voor een gesorteerde lijst
-     * returns lijst met waarden in volgorde
+     * In-order traversal voor een gesorteerde lijst (recursief met inOrderFill)
+     * TC: O(n)
+     * SC: O(n)
      */
     public List<T> TreeToSortedList() {
-        return ListInOrder(root);
-    }
-
-    /**
-     * TC: Best/worst/average O(n^2). Loop door alle nodes en voeg 1 voor 1 toe aan result, voor iedere TreeNode opnieuw
-     * SC: O(N) voor de lijst. (En recursie is de stack maximaal de hoogte van de boom O(N) in het slechtste geval)
-     * @param TreeNode root van de (sub)tree
-     * @return list met waarden in volgorde
-     */
-    private List<T> ListInOrder(TreeNode<T> TreeNode) {
-        List<T> result = new ArrayList<>();
-
-        if (TreeNode == null) {
-            return result;
-        }
-
-        //recursief links, wortel, recursief rechts
-        result.addAll(ListInOrder(TreeNode.left));
-        result.add(TreeNode.value);
-        result.addAll(ListInOrder(TreeNode.right));
-
+        List<T> result = new ArrayList<>(Math.max(0, size));
+        inorderFill(root, result);
         return result;
     }
 
+    /**
+     * Recursief met TreeToSortedList - voor in-order traversal
+     * @param node
+     * @param out
+     */
+    private void inorderFill(TreeNode<T> node, List<T> out) {
+        if (node == null) return;
+        inorderFill(node.left, out);
+        out.add(node.value);
+        inorderFill(node.right, out);
+    }
+
+    /**
+     * Vindt minimum waarde in de boom TC: O(h) hoogte van de boom
+     * @return kleinste waarde
+     * @throws NoSuchElementException lege boom
+     */
+    public T findMin() {
+        if (root == null) throw new NoSuchElementException("Tree is empty");
+        TreeNode<T> current = root;
+        while (current.left != null) current = current.left;
+        return current.value;
+    }
+
+    /**
+     * Vindt maximum waarde in de boom TC: O(h) hoogte van de boom
+     * @return grootste waarde
+     * @throws NoSuchElementException lege boom
+     */
+    public T findMax() {
+        if (root == null) throw new NoSuchElementException("Tree is empty");
+        TreeNode<T> current = root;
+        while (current.right != null) current = current.right;
+        return current.value;
+    }
 }

@@ -12,12 +12,12 @@ public class HashTable<K, V> implements iHashable<K, V> {
     private static final int DEFAULT_CAPACITY = 16;
     private static final double MAX_LOAD_FACTOR = 0.75;
 
-    private K[] keys;
+    private Object[] keys;
     private Object[] values;
     private int size;
 
     public HashTable() {
-        keys = new K[DEFAULT_CAPACITY];
+        keys = new Object[DEFAULT_CAPACITY];
         values = new Object[DEFAULT_CAPACITY];
         size = 0;
     }
@@ -58,7 +58,7 @@ public class HashTable<K, V> implements iHashable<K, V> {
         Object[] oldKeys = keys;
         Object[] oldValues = values;
 
-        keys = new K[newCapacity];
+        keys = new Object[newCapacity];
         values = new Object[newCapacity];
         size = 0;
 
@@ -198,4 +198,5 @@ public class HashTable<K, V> implements iHashable<K, V> {
     public int size() {
         return size;
     }
+
 }
