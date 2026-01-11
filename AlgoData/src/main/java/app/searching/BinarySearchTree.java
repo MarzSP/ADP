@@ -86,14 +86,6 @@ public class BinarySearchTree<T extends Comparable<T>> {
         return false;
     }
 
-    public int size() {
-        return size;
-    }
-
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
     /**
      * In-order traversal voor een gesorteerde lijst (recursief met inOrderFill)
      * TC: O(n)
@@ -139,5 +131,55 @@ public class BinarySearchTree<T extends Comparable<T>> {
         TreeNode<T> current = root;
         while (current.right != null) current = current.right;
         return current.value;
+    }
+
+    /**
+     * Verwijdert waarde uit de boom en behoudt de BST structuur door de juiste child nodes weer te koppelen
+     * TC: O(h) hoogte van de boom
+     * SC: O(1)
+     * @param value te removen waarde
+     * @return true als waarde is verwijderd
+     */
+    public boolean remove(T value) {
+        Objects.requireNonNull(value, "value cant be null");
+
+        TreeNode<T> parentNode = null;
+        TreeNode<T> currentNode = root;
+
+        //vind node om te verwijderen
+        while (currentNode != null) {
+            int comparison = value.compareTo(currentNode.value);
+            if (comparison == 0) break;
+            parentNode = currentNode;
+            currentNode = (comparison < 0) ? currentNode.left : currentNode.right;
+        }
+        if (currentNode == null) return false;
+
+        // als 2 children: vind inorder successor
+        // kopieer successor waarde naar currentNode, verwijder successor node
+        if (currentNode.left != null && currentNode.right != null) {
+            TreeNode<T> nextHigherParent = currentNode;
+            TreeNode<T> nextHigherNode = currentNode.right;
+            while (nextHigherNode.left != null) {
+                nextHigherParent = nextHigherNode;
+                nextHigherNode = nextHigherNode.left;
+            }
+            currentNode.value = nextHigherNode.value;
+            parentNode = nextHigherParent;
+            currentNode = nextHigherNode;
+        }
+
+        // currentNode heeft nu max 1 child
+        TreeNode<T> child = (currentNode.left != null) ? currentNode.left : currentNode.right;
+        if (parentNode == null) {
+            root = child;
+        } else if (parentNode.left == currentNode) {
+            parentNode.left = child;
+        } else {
+            parentNode.right = child;
+        }
+
+        size--;
+        return true;
     }
 }
