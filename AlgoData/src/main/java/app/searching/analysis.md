@@ -82,4 +82,6 @@ Hierna wijst er niks meer naar de verwijderde node, en is deze effectief uit de 
 TC: Avg: O(log n), Worst: O(n) wanneer de boom scheef is gegroeid en eigenlijk een lijst is.
 
 # Verbeteringen
+- Duplicatie verminderen: findNodeAndParent(T value) helper maken zodat we niet steeds dezelfde code hebben in Find en Remove.
+- InOrderFill is recursief, wat kan leiden tot stack overflow bij diepe bomen. Iteratieve aanpak zou dit kunnen voorkomen.
 
