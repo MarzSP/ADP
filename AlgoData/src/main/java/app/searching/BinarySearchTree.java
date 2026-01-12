@@ -95,7 +95,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
         List<T> result = new ArrayList<>(Math.max(0, size));
         inorderFill(root, result);
         return result;
-    }
+    } //TODO: checklist types
 
     /**
      * Recursief met TreeToSortedList - voor in-order traversal
@@ -133,6 +133,83 @@ public class BinarySearchTree<T extends Comparable<T>> {
         return current.value;
     }
 
+    private TreeNode<T> delNode(TreeNode<T> node, T value) {
+        if (node == null) return null;
+
+        int comparison = value.compareTo(node.value);
+        if (comparison < 0) {
+            node.left = delNode(node.left, value);
+        } else if (comparison > 0) {
+            node.right = delNode(node.right, value);
+        } else {
+            if (node.left == null) return node.right;
+            if (node.right == null) return node.left;
+
+            TreeNode<T> successor = node.right;
+            while(successor.left != null) {
+                successor = successor.left;
+            }
+
+            node.value = successor.value;
+            node.right = delNode(node.right, successor.value);
+        }
+        return node;
+    }
+
+    private boolean removeRecursive(T value, TreeNode<T> currentNode, TreeNode<T> parentNode) {
+        int comparison = value.compareTo(currentNode.value);
+        if (comparison < 0) {
+            if (currentNode.left == null) {
+                return false;
+            }
+            return removeRecursive(value, currentNode.left, currentNode);
+        }
+
+        if (comparison > 0) {
+            if (currentNode.right == null) {
+                return false;
+            }
+            return removeRecursive(value, currentNode.right, currentNode);
+        }
+
+        // element gevonden
+        if (currentNode.left == null && currentNode.right == null && parentNode != null) {
+            // childless, simply remove', ToDo improve
+            if (parentNode.left == currentNode) {
+                parentNode.left = null;
+            } else {
+                parentNode.right = null;
+            }
+            return true;
+        }
+
+        if (currentNode.left != null && currentNode.right == null && parentNode != null) {
+            if (parentNode.left == currentNode) {
+                parentNode.left = currentNode.left;
+            } else {
+                parentNode.right = currentNode.left;
+            }
+            return true;
+        }
+
+        if (currentNode.right != null && currentNode.left == null && parentNode != null) {
+            if (parentNode.right == currentNode) {
+                parentNode.right = currentNode.right;
+            } else {
+                parentNode.left = currentNode.right;
+            }
+            return true;
+        }
+
+        // both currentNode.right and left is set
+        if (parentNode.right == currentNode) {
+            parentNode = currentNode.right;
+        } else {
+            parentNode = currentNode.right;
+        }
+        return true;
+    }
+
     /**
      * Verwijdert waarde uit de boom en behoudt de BST structuur door de juiste child nodes weer te koppelen
      * TC: O(h) hoogte van de boom
@@ -141,6 +218,10 @@ public class BinarySearchTree<T extends Comparable<T>> {
      * @return true als waarde is verwijderd
      */
     public boolean remove(T value) {
+        TreeNode<T> result = delNode(root, value);
+        return result != null;
+    }
+    public boolean removeOld(T value) {
         Objects.requireNonNull(value, "value cant be null");
 
         TreeNode<T> parentNode = null;
@@ -153,7 +234,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
             parentNode = currentNode;
             currentNode = (comparison < 0) ? currentNode.left : currentNode.right;
         }
-        if (currentNode == null) return false;
+        if (currentNode == null) return false;//TODO: als ie niet gevonden is
 
         // als 2 children: vind inorder successor
         // kopieer successor waarde naar currentNode, verwijder successor node
@@ -168,7 +249,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
             parentNode = nextHigherParent;
             currentNode = nextHigherNode;
         }
-
+    //TODO: recursief zoeken naar de
         // currentNode heeft nu max 1 child
         TreeNode<T> child = (currentNode.left != null) ? currentNode.left : currentNode.right;
         if (parentNode == null) {

@@ -82,6 +82,23 @@ class BinarySearchTreeTest {
         assertEquals(List.of(1,2,3,4,5), bst.TreeToSortedList());
     }
 
+    @Test
+    void removeValue() {
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+
+        bst.insert(50);
+        bst.insert(30);
+        bst.insert(70);
+        bst.insert(20);
+        bst.insert(40);
+        bst.insert(35);
+        bst.insert(45);
+
+
+        assertEquals(List.of(20, 30, 35, 40, 45, 50, 70), bst.TreeToSortedList());
+        assertTrue(bst.remove(40));
+        assertEquals(List.of(20, 30, 35, 45, 50, 70), bst.TreeToSortedList());
+    }
 
 
 

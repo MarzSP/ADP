@@ -37,15 +37,29 @@ public class Graph<T extends Comparable<T>> {
         }
         return null;
     }
+    private int findNodeIndex(Vertex<T> vertex) {
+        for (int i = 0; i < adjacencyList.size(); i++) {
+            AdjacencyNode n = adjacencyList.get(i);
+            if (Objects.equals(n.vertex, vertex)) return i;
+        }
+        return -1;
+    }
+
+    private AdjacencyNode upsertVertex(Vertex<T> vertex) {
+        AdjacencyNode node = findNode(vertex);
+        if (node == null) {
+            node = new AdjacencyNode(vertex);
+            adjacencyList.add(node);
+        }
+        return node;
+    }
 
     /**
      * Voeg een vertex toe aan de graaf (in de adjacencyList) als deze nog niet bestaat
      * @param vertex  toe te voegen vertex
      */
     public void addVertex(Vertex<T> vertex){
-        if (findNode(vertex) == null) {
-            adjacencyList.add(new AdjacencyNode(vertex));
-        }
+        upsertVertex(vertex);
     }
 
     /**
@@ -55,13 +69,10 @@ public class Graph<T extends Comparable<T>> {
      * @param weight gewicht van de edge
      */
     public void addEdge(Vertex<T> source, Vertex<T> target, int weight) {
-        addVertex(source);
+        AdjacencyNode src = upsertVertex(source);
         addVertex(target);
 
-        AdjacencyNode src = findNode(source);
-        if (src != null) {
-            src.edges.add(new Edge<>(weight, target));
-        }
+        src.edges.add(new Edge<>(weight, target));
     }
 
     /**
@@ -90,6 +101,40 @@ public class Graph<T extends Comparable<T>> {
 
         return distance;
     }
+
+    private void dijkstraCheckAdjustedNode(int currentIndex, double[] distance, boolean[] visited) {
+        if (currentIndex == -1) return;
+        visited[currentIndex] = true;
+
+        AdjacencyNode node = adjacencyList.get(currentIndex);
+        for(int i = 0; i < node.edges.size(); i++) {
+            Edge edge = node.edges.get(i);
+
+            Vertex targetVertex = edge.getTargetVertex();
+            int neighbourIndex = findNodeIndex(targetVertex);
+
+            // take care of the neighbours
+            dijkstraCheckAdjustedNode(neighbourIndex, distance, visited);
+
+            // find index of target vertex in adjacencyList
+            int neighborIndex = -1;
+            for (int j = 0; j < adjacencyList.size(); j++) {
+                if (Objects.equals(adjacencyList.get(j).vertex, targetVertex)) {
+                    neighborIndex = j;
+                    break;
+                }
+            }
+            if (neighborIndex == -1) continue;
+
+            double candidate = distance[currentIndex] + edge.getWeight();
+            if (candidate < distance[neighborIndex]) {
+                distance[neighborIndex] = candidate;
+            }
+
+        }
+
+    }
+
 
     /**
      * Base case: currentIndex == -1. Dan zijn er geen bereikbare vertices meer
