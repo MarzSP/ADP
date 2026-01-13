@@ -1,60 +1,55 @@
 # Graph Analyse
-- Adjacency List: bewaart de graaf als een lijst van Nodes.
+- Adjacency List: bewaart de graaf in een LinkedList van VertexEntry objecten.
+  - Elke VertexEntry bevat een vertex en een lijst van edges die van die vertex vertrekken.
+  - Ik doe dit omdat we elementen zo kunnen toevoegen/verwijderen zonder de elementen te moeten kopieren, zoals bij een array.
+  - We gebruiken het om te itereren over alle vertices en hun edges, niet voor random access.
 
-- Inner Class: AdjacencyNode. De blauwdruk van hoe een element in de Adjacency List eruitziet.
+- Inner Class: VertexEntry
+- . De blauwdruk van hoe een element in de Adjacency List eruitziet.
   - Attributen:
     - Een vertex
     - Lijst van edges die van die vertex vertrekken
 
 Methoden:
-- private AdjacencyNode findNode(int vertex)
-  - Loopt door alle nodes in de Adjacency List. Zo lang er nodes zijn, controleert het of de vertex van de huidige node gelijk is aan de gezochte vertex.
-  - Als dat zo is, retourneert het die node.
+- private VertexEntry findEntry(int vertex)
+  - Loopt door alle nodes in de Adjacency List. Zo lang er entries zijn, controleert het of de vertex van de huidige entry gelijk is aan de gezochte vertex.
+  - Als dat zo is, retourneert het die entry.
   - ObjecctEquals wordt gebruikt om de vertexwaarden te vergelijken.
   - Als het niet gevonden wordt, retourneert het null. Door naar AddVertex.
 
+- private indexOfVertex(int vertex)
+  - Loopt door de Adjacency List en vergelijkt elke entry's vertex met de gegeven vertex.
+  - Als een match wordt gevonden, retourneert het de index van die entry.
+  - Als geen match wordt gevonden, retourneert het -1.
+  - 
 
-- public void addVertex(int vertex)
-  - Controleert of de vertex al bestaat door findNode aan te roepen.
-  - Als de vertex niet bestaat, maakt het een nieuwe AdjacencyNode aan met de gegeven vertex en een lege lijst van edges.
-  - Voegt de nieuwe node toe achteraan aan de Adjacency List.
+- private getOrCreateEntry(int vertex) (anti-duplicate mechanisme)
+      - Roept findEntry aan om te controleren of de vertex al bestaat in de graaf.
+      - Als de vertex bestaat, retourneert het die entry.
+      - Als de vertex niet bestaat, maakt het een nieuwe VertexEntry aan met de gegeven vertex en een lege lijst van edges.
+      - Voegt de nieuwe entry toe aan de Adjacency List en retourneert die.
 
+- public void addVertex(int vertex) - publieke methode om een vertex toe te voegen aan de graaf
+    - roep getOrCreateEntry aan om de vertex toe te voegen als die nog niet bestaat.
+    - Deze is publiek omdat we willen dat gebruikers van de graaf zelf vertices kunnen toevoegen en getOrCreateEntry is private omdat die alleen intern gebruikt wordt (encapsulation)
 
 - public void addEdge(int fromVertex, int toVertex)
-- Wanneer je een edge toevoegt, controleert het eerst of beide vertices al bestaan in de graaf.
-  - Als een van de vertices niet bestaat, roept het addVertex aan om die toe te voegen.
-  - Vervolgens vindt het de node voor source en voegt target toe aan de lijst van edges van die node.
-  - Dan voeg je een New Edge toe met gewicht en target
+    - VertexEntry srcEntry = getOrCreateEntry(fromVertex); Haal of maak de source vertex entry
+    - addVertex(targetVertex);Zorg dat de target vertex ook bestaat in de graaf
+    - src.edges.add(new Edge(1.0, toVertex)); Voeg een nieuwe edge toe van fromVertex naar toVertex met gewicht
+    - Dit voegt een edge toe aan de uitgaande van source vertex naar de target vertex.
+
+- public void removeEdge(int fromVertex, int toVertex)
+    - 1. Verwijder de vertex.
+        Loop door de adjacencyList en verwijder de entry waarvan de entry gelijk is aan entry.vertex == vertex
+    - 2. Verwijder alle edges die naar deze vertex wijzen.
+        Loop door alle overgebleven nodes in de adjacencyList en verwijder alle edges die naar de verwijderde vertex wijzen. Dit gebeurt achterstevoren om index problemen te voorkomen.
+  
+- public double[] dijkstraFromIndex(int startIndex)
 
 
-- public double[] dijkstra(int startVertex)
-  - int n = adjacencyList.size(); // Aantal vertices in de graaf
-  - double[] distances = new double[n]; // Array om de kortste afstanden op te slaan
-  - boolean[] visited = new boolean[n]; // Array om bij te houden welke vertices bezocht zijn
-  - Arrays.fill(distance, double Positive.infinity) Initialiseer alle afstanden naar oneindig, behalve de startVertex die is 0.0
-  - int start = findClosestNotVisited(distance, visited); // Vind de dichtstbijzijnde niet-bezochte vertex
-  - dijkstraRecursive(start, distance, visited); // Roep de recursieve Dijkstra-methode aan
-  - return distances; // Retourneer de array met kortste afstanden
-
-
-- private void dijkstraRecursive(int currentVertex, double[] distances, boolean[] visited)
-    - Base case: Als currentVertex -1 is, betekent dit dat er geen niet-bezochte vertices meer zijn, dus retourneer.
-    -  AdjacencyNode currentNode = adjacencyList.get(currentVertex); - Haal de huidige node op uit de Adjacency List
-    -  Int (e = 0 ; e < currentNode.edges.size(); e++) - Bekijk alle edges vanaf de huidige node
-       - Edge edge = currentNode.edges.get(e); - Haal de huidige edge op
-       - int neighborVertex = edge.target; - pak de target vertex van de edge
-       - Nu gaan we in de adjacencyList zoeken naar de index van de neighborVertex
-       - Deze slaan we op in neighborIndex
-       -  Nu berekenen we de nieuwe afstand naar de neighborVertex via currentVertex
-       - double candidate = distance[currentIndex] + edge.getWeight(); - Als deze nieuwe afstand kleiner is dan de huidige opgeslagen afstand naar neighborVertex, updaten we die afstand
-       - distances[neighborIndex] = candidate;
-       -    if (candidate < distance[neighborIndex]) {
-            distance[neighborIndex] = candidate;
-            } - Markeer currentVertex als bezocht door visited[currentVertex] op true te zetten
-       - visited[currentVertex] = true;
-       - int nextVertex = findClosestNotVisited(distances, visited); - Vind de volgende dichtstbijzijnde niet-bezochte vertex
-       - dijkstraRecursive(nextVertex, distances, visited); - Roep de methode recurssief aan met de volgende vertex
-
+- private void dijkstraRecursive(int currentIndex, double[] distance, boolean[] visited)
+ 
 
 - private int findClosestNotVisited(double[] distances, boolean[] visited)
     - int bestIndex = -1; // Houdt de index bij van de dichtstbijzijnde niet-bezochte vertex, begin met -1 omdat er nog geen is gevonden
@@ -80,7 +75,8 @@ Blauwdruk van hoe een Edge eruitziet in de graaf
   - Edge(double weight, int target): initialiseert de edge met het gegeven gewicht en target
 
 De Edge weet niet waar hij vandadan komt, alleen waar hij naartoe gaat (target) en wat zijn gewicht is.
-De Source vertex wordt bepaald door de AdjacencyNode waarin de Edge zich bevindt.
+De Source vertex wordt bepaald door de VertexEntry
+waarin de Edge zich bevindt.
 Dit voorkomt redundantie en houdt de structuur van de graaf overzichtelijk.
 
 # Vertex Analyse
