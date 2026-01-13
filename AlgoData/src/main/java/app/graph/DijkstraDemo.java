@@ -1,0 +1,119 @@
+package app.graph;
+
+import java.util.Arrays;
+
+/**
+ * Demo voor Graph + Dijkstra
+ * - Bouwt een kleine gerichte, gewogen graaf
+ * - Draait Dijkstra
+ * - Voegt een edge toe
+ * - Verwijdert een vertex
+ * - Draait Dijkstra opnieuw
+ */
+public class DijkstraDemo {
+
+    public static void main(String[] args) {
+        Graph<String> g = new Graph<>();
+
+        //Vertices
+        Vertex<String> A = new Vertex<>("A");
+        Vertex<String> B = new Vertex<>("B");
+        Vertex<String> C = new Vertex<>("C");
+        Vertex<String> D = new Vertex<>("D");
+
+        // Omdat dijkstraFromIndex(int) werkt met indices, voeg vertices in een vaste volgorde toe:
+        // index 0 = A, 1 = B, 2 = C, 3 = D
+        g.addVertex(A);
+        g.addVertex(B);
+        g.addVertex(C);
+        g.addVertex(D);
+
+        /*
+         * AdjacencyList (na alleen vertices):
+         * 0: A -> []
+         * 1: B -> []
+         * 2: C -> []
+         * 3: D -> []
+         */
+
+        //Edges toevoegen (gericht + gewogen)
+        g.addEdge(A, B, 1);   // A -> B (1)
+        g.addEdge(A, C, 10);  // A -> C (10)
+        g.addEdge(B, C, 2);   // B -> C (2)
+        g.addEdge(C, D, 3);   // C -> D (3)
+
+        /*
+         * AdjacencyList (na edges):
+         * 0: A -> (B,1), (C,10)
+         * 1: B -> (C,2)
+         * 2: C -> (D,3)
+         * 3: D -> []
+         */
+
+        //Dijkstra vanaf A (index 0)
+        System.out.println("Dijkstra vanaf A (index 0):");
+        printDistances(new String[]{"A", "B", "C", "D"}, g.dijkstraFromIndex(0));
+        // Verwacht:
+        // A: 0
+        // B: 1
+        // C: 3  (via A->B->C = 1+2, korter dan 10)
+        // D: 6  (via A->B->C->D = 1+2+3)
+
+        // Iets toevoegen: extra edge die een kortere route kan maken
+        g.addEdge(B, D, 1); // B -> D (1)
+
+        /*
+         * AdjacencyList (na extra edge):
+         * 0: A -> (B,1), (C,10)
+         * 1: B -> (C,2), (D,1)
+         * 2: C -> (D,3)
+         * 3: D -> []
+         */
+
+        System.out.println("\nNa toevoegen van edge B -> D (1):");
+        printDistances(new String[]{"A", "B", "C", "D"}, g.dijkstraFromIndex(0));
+        // Verwacht:
+        // D wordt nu 2 (A->B->D = 1+1) i.p.v. 6
+
+        // Iets verwijderen: verwijder vertex C
+        g.removeVertex(C);
+
+        /*
+         * Let op: removeVertex(C) verwijdert:
+         * - Vertex C zelf (entry verdwijnt uit adjacencyList)
+         * - Alle edges die naar C wijzen (A->C en B->C verdwijnen)
+         *
+         * De indices kunnen hierdoor verschuiven. Het zijn posities op dat moment.
+         * Oorspronkelijk: 0 A, 1 B, 2 C, 3 D
+         * Na verwijderen van C: adjacencyList bevat alleen A, B, D (in die volgorde)
+         *
+         * Nieuwe adjacency list:
+         * 0: A -> (B,1)          (A->C is weg)
+         * 1: B -> (D,1)          (B->C is weg)
+         * 2: D -> []
+         */
+
+        System.out.println("\nNa verwijderen van vertex C:");
+        // Nu zijn de labels niet meer 1-op-1 te koppelen aan oude indices.
+        // Maar omdat A als eerste bleef staan, is index 0 nog steeds A.
+        double[] distAfterRemove = g.dijkstraFromIndex(0);
+        //
+        System.out.println("Afstanden vanaf index 0 (A): " + Arrays.toString(distAfterRemove));
+        // Verwacht:
+        // A: 0
+        // B: 1
+        // D: 2 (A->B->D)
+        // In array-vorm: [0.0, 1.0, 2.0]
+    }
+
+    private static void printDistances(String[] labels, double[] dist) {
+        for (int i = 0; i < dist.length; i++) {
+            String name = (i < labels.length) ? labels[i] : ("index " + i);
+            if (Double.isInfinite(dist[i])) {
+                System.out.println(name + ": Infinity");
+            } else {
+                System.out.println(name + ": " + dist[i]);
+            }
+        }
+    }
+}

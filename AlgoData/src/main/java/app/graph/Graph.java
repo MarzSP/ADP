@@ -4,63 +4,120 @@ import app.lists.LinkedList;
 import java.util.*;
 
 /**
- * Class voor een gerichte gewogen graaf met generieke vertices
- * De graaf wordt gerepresenteerd met een adjacency list
+ * Class voor een gerichte gewogen graaf met generieke vertices met adjacency list
+ * Inner class VertexEntry voor entries in de adjacency list (vertex + lijst van edges)
  * @param <T> generic type voor de data in de vertices
  */
 public class Graph<T extends Comparable<T>> {
 
-    private final LinkedList<AdjacencyNode> adjacencyList = new LinkedList<>();
+    private final LinkedList<VertexEntry> adjacencyList = new LinkedList<>();
 
     /**
-     * Class voor een entry/node in de adjacency list
+     * Class voor een entry in de adjacency list
      * Bevat een vertex en een lijst van edges
      */
-    private class AdjacencyNode {
+    private class VertexEntry {
         final Vertex<T> vertex;
         final LinkedList<Edge<T>> edges = new LinkedList<>();
 
-        AdjacencyNode(Vertex<T> vertex) {
+        VertexEntry(Vertex<T> vertex) {
             this.vertex = vertex;
         }
     }
 
     /**
-     * Zoek een node in de adjacency list op basis van de vertex
+     * Zoek een entry in de adjacency list op basis van de vertex
+     * TC: Best O(1) als de vertex vooraan staat, worst O(n) als deze achteraan staat of niet bestaat
+     * SC: O(1)
      * @param vertex de vertex om te zoeken
-     * @return de gevonden AdjacencyNode of null als niet gevonden
+     * @return de gevonden VertexEntry of null als niet gevonden
      */
-    private AdjacencyNode findNode(Vertex<T> vertex) {
+    private VertexEntry findEntry(Vertex<T> vertex) {
         for (int i = 0; i < adjacencyList.size(); i++) {
-            AdjacencyNode n = adjacencyList.get(i);
-            if (Objects.equals(n.vertex, vertex)) return n;
+            VertexEntry entry = adjacencyList.get(i);
+            if (Objects.equals(entry.vertex, vertex)) return entry;
         }
         return null;
     }
 
     /**
+     * Zoek de index van een vertex in de adjacency list
+     * TC: Best O(1) als de vertex vooraan staat, worst O(n) als deze achteraan staat of niet bestaat
+     * SC: O(1)
+     * @param vertex de vertex om te zoeken
+     * @return index van de vertex of -1 als niet gevonden
+     */
+    private int indexOfVertex(Vertex<T> vertex) {
+        for (int i = 0; i < adjacencyList.size(); i++) {
+            VertexEntry n = adjacencyList.get(i);
+            if (Objects.equals(n.vertex, vertex)) return i;
+        }
+        return -1;
+    }
+
+    /**
+     * Haal een VertexEntry op of maak deze aan als deze nog niet bestaat
+     * TC: O(n)
+     * SC: O(1) + ruimte voor nieuwe entry als nodig
+     * @param vertex de vertex om te zoeken of toe te voegen
+     * @return gevonden of nieuw aangemaakte VertexEntry
+     */
+    private VertexEntry getOrCreateEntry(Vertex<T> vertex) {
+        VertexEntry node = findEntry(vertex);
+        if (node == null) {
+            node = new VertexEntry(vertex);
+            adjacencyList.add(node);
+        }
+        return node;
+    }
+
+    /**
      * Voeg een vertex toe aan de graaf (in de adjacencyList) als deze nog niet bestaat
+     * TC: O(n)
+     * SC: O(1) + ruimte voor nieuwe vertex
      * @param vertex  toe te voegen vertex
      */
     public void addVertex(Vertex<T> vertex){
-        if (findNode(vertex) == null) {
-            adjacencyList.add(new AdjacencyNode(vertex));
-        }
+        getOrCreateEntry(vertex);
     }
 
     /**
      * Voeg een gerichte edge toe van source vertex naar target vertex met gegeven gewicht
+     * TC: O(n)
+     * SC: O(1) + ruimte voor nieuwe edge
      * @param source bron vertex
      * @param target doel vertex
      * @param weight gewicht van de edge
      */
     public void addEdge(Vertex<T> source, Vertex<T> target, int weight) {
-        addVertex(source);
+        VertexEntry src = getOrCreateEntry(source);
         addVertex(target);
 
-        AdjacencyNode src = findNode(source);
-        if (src != null) {
-            src.edges.add(new Edge<>(weight, target));
+        src.edges.add(new Edge<>(weight, target));
+    }
+
+    /**
+     * Verwijder een vertex en alle edges die ernaar wijzen
+     * TC: O(n + m) n vertices en m edges = 1x vertex zoeken/verwijderen + alle edges nalopen om verwijzingen te verwijderen
+     * SC: O(1)
+     * @param vertex te verwijderen vertex
+     */
+    public void removeVertex(Vertex<T> vertex) {
+        // verwijder de vertex zelf
+        for (int i = 0; i < adjacencyList.size(); i++) {
+            if (Objects.equals(adjacencyList.get(i).vertex, vertex)) {
+                adjacencyList.remove(i);
+                break;
+            }
+        }
+        // Verwijder edges die naar de vertex wijzen
+        for (int i = 0; i < adjacencyList.size(); i++) {
+            LinkedList<Edge<T>> edges = adjacencyList.get(i).edges;
+            for (int j = edges.size() - 1; j >= 0; j--) {
+                if (Objects.equals(edges.get(j).getTargetVertex(), vertex)) {
+                    edges.remove(j);
+                }
+            }
         }
     }
 
@@ -69,10 +126,12 @@ public class Graph<T extends Comparable<T>> {
      * Returns afstanden met een double[] met Double.POSITIVE_INFINITY voor onbezochte vertices
      * Boolean[] houdt bij welke vertices al gedaan zijn
      * Double[] houdt de kortste afstanden bij
+     * TC: O(n + m*n) met n vertices en m edges
+     * SC: O(n) voor distance en visited arrays
      * @param startIndex beginpunt voor Dijkstra
      * @return distances from startIndex to all others
      */
-    public double[] dijkstra(int startIndex) {
+    public double[] dijkstraFromIndex(int startIndex) {
         int n = adjacencyList.size();
         if (startIndex < 0 || startIndex >= n) {
             throw new IllegalArgumentException("startIndex out of range");
@@ -94,6 +153,8 @@ public class Graph<T extends Comparable<T>> {
     /**
      * Base case: currentIndex == -1. Dan zijn er geen bereikbare vertices meer
      * Recursive case: update afstanden van buren van currentIndex
+     * TC: O(n + m*n) met n vertices en m edges
+     * SC: O(n) voor distance en visited arrays + O(n) voor recursie stack
      * @param currentIndex  huidige vertex index
      * @param distance   afstanden
      * @param visited bezochte vertices
@@ -101,19 +162,12 @@ public class Graph<T extends Comparable<T>> {
     private void dijkstraRecursive(int currentIndex, double[] distance, boolean[] visited) {
         if (currentIndex == -1) return;
 
-        AdjacencyNode currentNode = adjacencyList.get(currentIndex);
+        VertexEntry currentNode = adjacencyList.get(currentIndex);
         for (int e = 0; e < currentNode.edges.size(); e++) {
             Edge<T> edge = currentNode.edges.get(e);
             Vertex<T> targetVertex = edge.getTargetVertex();
 
-            // find index of target vertex in adjacencyList
-            int neighborIndex = -1;
-            for (int i = 0; i < adjacencyList.size(); i++) {
-                if (Objects.equals(adjacencyList.get(i).vertex, targetVertex)) {
-                    neighborIndex = i;
-                    break;
-                }
-            }
+            int neighborIndex = indexOfVertex(targetVertex);
             if (neighborIndex == -1) continue;
 
             double candidate = distance[currentIndex] + edge.getWeight();
@@ -129,6 +183,8 @@ public class Graph<T extends Comparable<T>> {
 
     /**
      * Zoek de index van de dichtstbijzijnde vertex die nog niet gedaan is (!visited[])
+     * TC: O(n) met n vertices om de distance array te doorlopen
+     * SC: O(1)
      * @param distance afstanden
      * @param visited bezochte vertices
      * @return bestIndex index van de dichtstbijzijnde onbezochte vertex
@@ -144,28 +200,5 @@ public class Graph<T extends Comparable<T>> {
             }
         }
         return bestIndex;
-    }
-
-    /**
-     * Verwijder een vertex en alle edges die ernaar wijzen
-     * @param vertex te verwijderen vertex
-     */
-    public void removeVertex(Vertex<T> vertex) {
-        // verwijder de vertex zelf
-        for (int i = 0; i < adjacencyList.size(); i++) {
-            if (Objects.equals(adjacencyList.get(i).vertex, vertex)) {
-                adjacencyList.remove(i);
-                break;
-            }
-        }
-        // Verwijder edges die naar de vertex wijzen
-        for (int i = 0; i < adjacencyList.size(); i++) {
-            LinkedList<Edge<T>> edges = adjacencyList.get(i).edges;
-            for (int j = edges.size() - 1; j >= 0; j--) {
-                if (Objects.equals(edges.get(j).getTargetVertex(), vertex)) {
-                    edges.remove(j);
-                }
-            }
-        }
     }
 }
