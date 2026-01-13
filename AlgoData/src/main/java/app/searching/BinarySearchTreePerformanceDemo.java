@@ -5,12 +5,12 @@ package app.searching;
  * Vaste input: gebalanceerde (150 values) en gesorteerd (150 values)
  * Runs: 1000
  * Resultaat:
- * Add balanced:  6493500 ns (6 ms)
- * Add sorted:    736300 ns (0 ms)
- * Contains balanced: 7319100 ns (7 ms)
- * Contains sorted:   20302500 ns (20 ms)
- * ToSortedList balanced: 157200 ns (0 ms)
- * ToSortedList sorted:   39100 ns (0 ms)
+ * Add balanced:  2217500 ns (2 ms)
+ * Add sorted:    702800 ns (0 ms)
+ * Contains balanced: 5019600 ns (5 ms)
+ * Contains sorted:   18094000 ns (18 ms)
+ * ToSortedList balanced: 139000 ns (0 ms)
+ * ToSortedList sorted:   33900 ns (0 ms)
  *
  */
 public class BinarySearchTreePerformanceDemo {

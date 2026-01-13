@@ -3,7 +3,7 @@ Ik heb een basic BST geimplementeerd met de volgende functies:
 - Een nested TreeNode class die de waarde en pointers naar linker en rechter kinderen bevat. Deze is nested omdat hij alleen binnen de BST klasse gebruikt wordt.
 Het is geen los concept buiten de BST om, het is een implementatie detail.
 - 
-### Add(T value): Voegt een waarde toe aan de boom.
+### Insert(T value): Voegt een waarde toe aan de boom.
 1. Boom leeg? Maak nieuwe TreeNode als root. Boom heeft nu size 1.
 2. Boom niet leeg? Vergelijk waarde T met huidige TreeNode. Eerst plek zoeken, dan nieuwe TreeNode toevoegen.
 int comparable = nieuwe waarde vergelijken met de waarde waar we nu op staan
@@ -53,7 +53,7 @@ Geeft een lijst terug met alle waarden in de boom, gesorteerd van klein naar gro
 TC: O(n²) in het slechtste geval (bijv. als de boom een lijst wordt).
 SC: O(n) voor de lijst die we maken.
 
-### Find(T value): Controleert of een waarde in de boom zit.
+### Find(T value), FindMin, FindMax: Controleert of een waarde in de boom zit.
 1. Begin bij de root TreeNode.
 2. Vergelijk de waarde met de huidige TreeNode.
 3. int comparable = waarde vergelijken met huidige TreeNode
@@ -65,23 +65,50 @@ SC: O(n) voor de lijst die we maken.
 
 TC: Avg: O(log n), Worst: O(n) wanneer de boom scheef is gegroeid en eigenlijk een lijst is. Best case is O(1) wanneer waarde root is.
 
-### Remove(T value): Verwijdert een waarde uit de boom.
-Er zijn 3 gevallen: Een node heeft geen kinderen, 1 kind, of 2 kinderen.
+### deleteNode(T value): Verwijdert een waarde uit de boom.
+If(node == null) return null; waarde niet gevonden
 
-while(currentNode != null) {
-    int comparable = waarde vergelijken met huidige TreeNode (negatief of positief getal)
-    - T < TreeNode.value? (negatief getal) Ga naar links.
-    - T > TreeNode.value? (positief getal) Ga naar rechts.
-    - We onthouden de ouder van de huidige node om later de link te kunnen aanpassen.
-    - T == TreeNode.value? We hebben de node gevonden die we willen verwijderen.
-        1. Geen kinderen: Zet de ouder's link of rechter pointer naar null.
-        2. 1 kind: Zet de ouder's link of rechter pointer naar het kind van de te verwijderen node.
-        3. 2 kinderen: Zoek de inorder successor (kleinste waarde in de rechter subtree). Vervang de waarde van de te verwijderen node met de inorder successor waarde. 
-            Verwijder vervolgens de inorder successor node (die heeft maximaal 1 kind).
-Hierna wijst er niks meer naar de verwijderde node, en is deze effectief uit de boom verwijderd. (en wordt door GC opgeruimd)
-TC: Avg: O(log n), Worst: O(n) wanneer de boom scheef is gegroeid en eigenlijk een lijst is.
+1. Zoek de TreeNode met de comparison logica zoals in Find.
+2. Bij comparison (0) is de waarde gevonden:
+    - Geen kinderen: return null (verwijder de node).
+    - Eén kind: return het niet-null kind (vervang de node door zijn kind).
+    - Twee kinderen:
+        - Zoek de inorder successor (min waarde in de rechter subtree).
+        - Kopieer de waarde van de inorder successor naar de huidige node.
+        - Verwijder de inorder successor uit de rechter subtree.
+3. We moeten node teruggeven zodat de ouder node zijn pointer kan bijwerken en omdat root mogelijk verandert of verwijderd wordt.
+
+### remove(T value): Wrapper voor deleteNode.
+1. Roep deleteNode aan met de root en de waarde.
+2. Houdt de size van de boom bij en controleer of de waarde daadwerkelijk verwijderd is (door te checken of de size veranderd is)
+3. Return true als de waarde verwijderd is, anders false.
 
 # Verbeteringen
 - Duplicatie verminderen: findNodeAndParent(T value) helper maken zodat we niet steeds dezelfde code hebben in Find en Remove.
 - InOrderFill is recursief, wat kan leiden tot stack overflow bij diepe bomen. Iteratieve aanpak zou dit kunnen voorkomen.
+Iteratief met een arrayList als stack.
+Time Complexity: O(n) altijd omdat elke node 1x bezocht wordt
+Space Complexity: O(n) maar de extra stack space is O(h) waarbij h de hoogte van de boom is
+````
+private void inorderFillIterative(TreeNode<T> start, List<T> out) {
+    List<TreeNode<T>> stack = new ArrayList<>();
+    TreeNode<T> current = start;
 
+    while (current != null || !stack.isEmpty()) {
+
+        // 1. Ga zo ver mogelijk naar links
+        while (current != null) {
+            stack.add(current);              // push
+            current = current.left;
+        }
+
+        // 2. Pak de bovenste node van de stack
+        TreeNode<T> node = stack.remove(stack.size() - 1); // pop
+        out.add(node.value);
+
+        // 3. Ga naar rechts
+        current = node.right;
+    }
+}
+
+```` 

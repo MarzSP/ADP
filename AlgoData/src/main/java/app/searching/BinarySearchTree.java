@@ -6,14 +6,13 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
- * Boom leeg? Dan maak eerst de root
- * Met vergelijken: kleiner naar links, groter naar rechts
- * Geen duplicaten mogelijk: als de waarde al bestaat kan de vergelijking de boom scheef maken. Vaste orde houden.
+ * Implementatie generic BST
+ * Gebruikt inner class TreeNode voor nodes omdat deze niet buiten de boom gebruikt hoeft te worden
  * @param <T> Generic type die comparable is
  */
 public class BinarySearchTree<T extends Comparable<T>> {
 
-   private static class TreeNode<T> {
+    private static class TreeNode<T> {
         T value;
         TreeNode<T> left;
         TreeNode<T> right;
@@ -27,7 +26,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
     private int size;
 
     /**
-     * Voegt waarde toe aan de boom
+     * Boom leeg? Dan maak eerst de root
+     * Met vergelijken: kleiner naar links, groter naar rechts
+     * Geen duplicaten mogelijk: als de waarde al bestaat kan de vergelijking de boom scheef maken. Vaste orde houden.
      * TC: Best O(log n) bij gebalanceerde boom, worst O(n) bij scheve boom
      * SC: O(1)
      * @param value toe te voegen waarde
@@ -69,6 +70,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
     /**
      * Zoekt of waarde in de boom zit
+     * Start bij root en vergelijk, ga links of rechts afhankelijk van de vergelijking
      * TC: Best O(log n) bij gebalanceerde boom, worst O(n) bij scheve boom
      * SC: O(1)
      * @param value te zoeken waarde
@@ -88,8 +90,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
     /**
      * In-order traversal voor een gesorteerde lijst (recursief met inOrderFill)
-     * TC: O(n)
-     * SC: O(n)
+     * TC: O(n) elke node wordt 1x bezocht
+     * SC: O(n) lijst met alle waarden
+     * @return gesorteerde lijst van waarden in de boom
      */
     public List<T> TreeToSortedList() {
         List<T> result = new ArrayList<>(Math.max(0, size));
@@ -98,9 +101,12 @@ public class BinarySearchTree<T extends Comparable<T>> {
     }
 
     /**
-     * Recursief met TreeToSortedList - voor in-order traversal
-     * @param node
-     * @param out
+     * Recursief helper voor in-order traversal
+     * Zoekt eerst links, dan huidige node, dan rechts
+     * TC: O(n) elke node wordt 1x bezocht
+     * SC:: O(log n) gebruikt stack ruimte voor recursie (Worst O(n) bij scheve boom)
+     * @param node huidige node
+     * @param out output lijst
      */
     private void inorderFill(TreeNode<T> node, List<T> out) {
         if (node == null) return;
@@ -110,7 +116,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
     }
 
     /**
-     * Vindt minimum waarde in de boom TC: O(h) hoogte van de boom
+     * Vindt minimum waarde in de boom
+     * TC: Best O(1) als root de kleinste is, worst O(h) hoogte van de boom
+     * SC: O(1)
      * @return kleinste waarde
      * @throws NoSuchElementException lege boom
      */
@@ -122,7 +130,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
     }
 
     /**
-     * Vindt maximum waarde in de boom TC: O(h) hoogte van de boom
+     * Vindt maximum waarde in de boom
+     * TC: Best O(1) als root de grootste is, worst O(h) hoogte van de boom
+     * SC: O(1)
      * @return grootste waarde
      * @throws NoSuchElementException lege boom
      */
@@ -134,52 +144,57 @@ public class BinarySearchTree<T extends Comparable<T>> {
     }
 
     /**
-     * Verwijdert waarde uit de boom en behoudt de BST structuur door de juiste child nodes weer te koppelen
-     * TC: O(h) hoogte van de boom
-     * SC: O(1)
+     * Verwijderd recursief waarde uit boom met behoud van BST structuur
+     * Zoek eerst de waarde, dan 3 cases:
+     * 1. Node heeft geen children: return null
+     * 2. Node heeft 1 child: return die child
+     * 3. Node heeft 2 children: vind successor (kleinste in rechter subtree), kopieer waarde, verwijder successor
+     * TC:O(log n) bij gebalanceerde boom, worst O(n) bij scheve boom
+     * SC:O(log n) gebruikt stack ruimte voor recursie (Worst O(n) bij scheve boom)
+     * @param node huidige node
+     * @param value te verwijderen
+     * @return aangepaste subtree root
+     */
+    private TreeNode<T> deleteNode(TreeNode<T> node, T value) {
+        if (node == null) return null;
+
+        int comparison = value.compareTo(node.value);
+        if (comparison < 0) {
+            node.left = deleteNode(node.left, value);
+        } else if (comparison > 0) {
+            node.right = deleteNode(node.right, value);
+        } else {
+            size--;
+            if (node.left == null) return node.right;
+            if (node.right == null) return node.left;
+
+            TreeNode<T> successor = node.right;
+            while(successor.left != null) {
+                successor = successor.left;
+            }
+
+            node.value = successor.value;
+
+            size++; // compensatie voor de decrement eerder
+            node.right = deleteNode(node.right, successor.value);
+        }
+        return node;
+    }
+
+    /**
+     * Verwijdert waarde uit de boom
+     * Onthoudt de huidige grootte van de boom -> roept deleteNode aan -> vergelijkt grootte na verwijdering
+     * TC: Best case: O(log n) gebalanceerde boom en worst case: O(n) scheve boom
+     * SC: O(h) hoogte van de boom vanwege recursie
      * @param value te removen waarde
      * @return true als waarde is verwijderd
      */
     public boolean remove(T value) {
-        Objects.requireNonNull(value, "value cant be null");
+        Objects.requireNonNull(value, "waarde mag geen null zijn");
+        int oldSize = size;
 
-        TreeNode<T> parentNode = null;
-        TreeNode<T> currentNode = root;
+        root = deleteNode(root, value);
 
-        //vind node om te verwijderen
-        while (currentNode != null) {
-            int comparison = value.compareTo(currentNode.value);
-            if (comparison == 0) break;
-            parentNode = currentNode;
-            currentNode = (comparison < 0) ? currentNode.left : currentNode.right;
-        }
-        if (currentNode == null) return false;
-
-        // als 2 children: vind inorder successor
-        // kopieer successor waarde naar currentNode, verwijder successor node
-        if (currentNode.left != null && currentNode.right != null) {
-            TreeNode<T> nextHigherParent = currentNode;
-            TreeNode<T> nextHigherNode = currentNode.right;
-            while (nextHigherNode.left != null) {
-                nextHigherParent = nextHigherNode;
-                nextHigherNode = nextHigherNode.left;
-            }
-            currentNode.value = nextHigherNode.value;
-            parentNode = nextHigherParent;
-            currentNode = nextHigherNode;
-        }
-
-        // currentNode heeft nu max 1 child
-        TreeNode<T> child = (currentNode.left != null) ? currentNode.left : currentNode.right;
-        if (parentNode == null) {
-            root = child;
-        } else if (parentNode.left == currentNode) {
-            parentNode.left = child;
-        } else {
-            parentNode.right = child;
-        }
-
-        size--;
-        return true;
+        return size != oldSize;
     }
 }
