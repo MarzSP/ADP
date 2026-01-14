@@ -9,13 +9,30 @@ import java.util.Arrays;
  * - Voegt een edge toe
  * - Verwijdert een vertex
  * - Draait Dijkstra opnieuw
+ * Output:
+ * Dijkstra vanaf A (index 0):
+ * A: 0.0
+ * B: 1.0
+ * C: 3.0
+ * D: 6.0
+ * Dijkstra runtime: 1.200 ns (0,001 ms)
+ *
+ * Na toevoegen van edge B -> D (1):
+ * A: 0.0
+ * B: 1.0
+ * C: 3.0
+ * D: 2.0
+ * Dijkstra runtime: 500 ns (0,001 ms)
+ *
+ * Na verwijderen van vertex C:
+ * Afstanden vanaf index 0 (A): [0.0, 1.0, 2.0]
+ * Dijkstra runtime: 500 ns (0,001 ms)
  */
 public class DijkstraDemo {
 
     public static void main(String[] args) {
         Graph<String> g = new Graph<>();
 
-        //Vertices
         Vertex<String> A = new Vertex<>("A");
         Vertex<String> B = new Vertex<>("B");
         Vertex<String> C = new Vertex<>("C");
@@ -52,7 +69,24 @@ public class DijkstraDemo {
 
         //Dijkstra vanaf A (index 0)
         System.out.println("Dijkstra vanaf A (index 0):");
-        printDistances(new String[]{"A", "B", "C", "D"}, g.dijkstraFromIndex(0));
+
+        // PERFORMANCE METING START
+        // Warm-up
+        for (int i = 0; i < 5_000; i++) {
+            g.dijkstraFromIndex(0);
+        }
+
+        long startTime = System.nanoTime();
+        double[] distances = g.dijkstraFromIndex(0);
+        long endTime = System.nanoTime();
+
+        long durationNs = endTime - startTime;
+        //PERFORMANCE METING EIND
+
+        printDistances(new String[]{"A", "B", "C", "D"}, distances);
+        System.out.printf("Dijkstra runtime: %,d ns (%.3f ms)%n",
+                durationNs, durationNs / 1_000_000.0);
+
         // Verwacht:
         // A: 0
         // B: 1
@@ -71,7 +105,22 @@ public class DijkstraDemo {
          */
 
         System.out.println("\nNa toevoegen van edge B -> D (1):");
-        printDistances(new String[]{"A", "B", "C", "D"}, g.dijkstraFromIndex(0));
+
+        //PERFORMANCE METING START
+        for (int i = 0; i < 5_000; i++) {
+            g.dijkstraFromIndex(0);
+        }
+
+        startTime = System.nanoTime();
+        distances = g.dijkstraFromIndex(0);
+        endTime = System.nanoTime();
+        durationNs = endTime - startTime;
+        // PERFORMANCE METING EIND
+
+        printDistances(new String[]{"A", "B", "C", "D"}, distances);
+        System.out.printf("Dijkstra runtime: %,d ns (%.3f ms)%n",
+                durationNs, durationNs / 1_000_000.0);
+
         // Verwacht:
         // D wordt nu 2 (A->B->D = 1+1) i.p.v. 6
 
@@ -94,11 +143,22 @@ public class DijkstraDemo {
          */
 
         System.out.println("\nNa verwijderen van vertex C:");
-        // Nu zijn de labels niet meer 1-op-1 te koppelen aan oude indices.
-        // Maar omdat A als eerste bleef staan, is index 0 nog steeds A.
+
+        //PERFORMANCE METING START
+        for (int i = 0; i < 5_000; i++) {
+            g.dijkstraFromIndex(0);
+        }
+
+        startTime = System.nanoTime();
         double[] distAfterRemove = g.dijkstraFromIndex(0);
-        //
+        endTime = System.nanoTime();
+        durationNs = endTime - startTime;
+        //PERFORMANCE METING EIND
+
         System.out.println("Afstanden vanaf index 0 (A): " + Arrays.toString(distAfterRemove));
+        System.out.printf("Dijkstra runtime: %,d ns (%.3f ms)%n",
+                durationNs, durationNs / 1_000_000.0);
+
         // Verwacht:
         // A: 0
         // B: 1
