@@ -1,6 +1,5 @@
 package app.graph;
 
-import app.lists.LinkedList;
 import java.util.*;
 
 /**
@@ -34,8 +33,7 @@ public class Graph<T extends Comparable<T>> {
      * @return de gevonden VertexEntry of null als niet gevonden
      */
     private VertexEntry findEntry(Vertex<T> vertex) {
-        for (int i = 0; i < adjacencyList.size(); i++) {
-            VertexEntry entry = adjacencyList.get(i);
+        for (VertexEntry entry : adjacencyList) {
             if (Objects.equals(entry.vertex, vertex)) return entry;
         }
         return null;
