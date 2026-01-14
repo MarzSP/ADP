@@ -15,18 +15,18 @@ import java.util.Arrays;
  * B: 1.0
  * C: 3.0
  * D: 6.0
- * Dijkstra runtime: 1.200 ns (0,001 ms)
+ * Dijkstra runtime: 1.000 ns (0,001 ms)
  *
  * Na toevoegen van edge B -> D (1):
  * A: 0.0
  * B: 1.0
  * C: 3.0
  * D: 2.0
- * Dijkstra runtime: 500 ns (0,001 ms)
+ * Dijkstra runtime: 600 ns (0,001 ms)
  *
  * Na verwijderen van vertex C:
  * Afstanden vanaf index 0 (A): [0.0, 1.0, 2.0]
- * Dijkstra runtime: 500 ns (0,001 ms)
+ * Dijkstra runtime: 300 ns (0,001 ms)
  */
 public class DijkstraDemo {
 

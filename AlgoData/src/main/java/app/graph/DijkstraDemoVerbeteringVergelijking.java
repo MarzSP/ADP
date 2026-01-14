@@ -14,13 +14,13 @@ import java.util.Random;
  * - warmup runs = 100
  * - measure runs = 100
  *
- * Original Graph (lineair closest search)
- * Total: 3236,26 ms
- * Average per run: 32362,63 µs (32362625 ns)
+ * Original Graph (lineair search)
+ * Total: 2181,29 ms
+ * Average per run: 21812,94 µs (21812939 ns)
  *
  * GraphVerbetering (PriorityQueue)
- * Total: 3217,73 ms
- * Average per run: 32177,25 µs (32177250 ns)
+ * Total: 2145,17 ms
+ * Average per run: 21451,67 µs (21451666 ns)
  */
 public class DijkstraDemoVerbeteringVergelijking {
 
