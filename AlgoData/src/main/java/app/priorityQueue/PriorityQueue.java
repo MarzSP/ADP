@@ -1,180 +1,91 @@
 package app.priorityQueue;
-import java.util.LinkedList;
 
-public class PriorityQueue<T> implements iPriorityQueue<T> {
-    /**
-     * Interne bucket: een prio met een FIFO-lijst van waarden
-     * TC: O(1) voor add/remove aan begin/eind lijst
-     * SC: O(n) voor n elementen in de lijst
-     */
-    static class Bucket<T> {
+import java.util.NoSuchElementException;
+
+/**
+ * PQ implementatie als een gesorteerde single linked list
+ * Lowest value = highest priority
+ * insert:    O(n)
+ * findMin:   O(1)
+ * removeMin: O(1)
+ */
+public class PriorityQueue<T> {
+
+    private static class Node<T> {
+        T value;
         int priority;
-        LinkedList<T> values = new LinkedList<>();
-        Bucket<T> next;
+        Node<T> next;
 
-        Bucket(int priority) {
+        Node(T value, int priority) {
+            this.value = value;
             this.priority = priority;
         }
     }
 
-    private Bucket<T> head;
-    private int size = 0;
+    private Node<T> head; // altijd de hoogste prioriteit (laagste nr)
+    private int size;
 
     /**
-     * Voeg een nieuw element toe aan de queue met een prio
-     * TC: O(n) in het slechtste geval (zoeken juiste plek)
-     * SC: O(1) extra ruimte
-     * @param value waarde om op te slaan
-     * @param priority prio
+     * insert altijd op de juiste plek om de lijst gesorteerd te houden
+     * TC: O(n) in het slechtste geval (toevoegen achteraan) Best O(1) (toevoegen vooraan)
      */
-    @Override
-    public void enqueue(T value, int priority) {
-        if (value == null) {
-            throw new IllegalArgumentException("value mag niet null zijn");
-        }
+    public void insert(T value, int priority) {
+        Node<T> newNode = new Node<>(value, priority);
 
-        if (head == null) {
-            head = new Bucket<>(priority);
-            head.values.add(value);
+        // Case 1: leeg Of new node wordt de head
+        if (head == null || priority < head.priority) {
+            newNode.next = head;
+            head = newNode;
             size++;
             return;
         }
 
-        // nieuwe hoogste prioriteit
-        if (priority < head.priority) {
-            Bucket<T> bucket = new Bucket<>(priority);
-            bucket.values.add(value);
-            bucket.next = head;
-            head = bucket;
-            size++;
-            return;
-        }
-
-        Bucket<T> current = head;
-        Bucket<T> previous = null;
-
-        // zoek juiste plek
-        while (current != null && current.priority < priority) {
-            previous = current;
+        // Case 2: vindt de plek om te inserten
+        Node<T> current = head;
+        while (current.next != null && current.next.priority <= priority) {
             current = current.next;
         }
 
-        // bucket met zelfde prio gevonden
-        if (current != null && current.priority == priority) {
-            current.values.add(value);
-        } else {
-            Bucket<T> bucket = new Bucket<>(priority);
-            bucket.values.add(value);
-            bucket.next = current;
-            previous.next = bucket;
-        }
+        newNode.next = current.next;
+        current.next = newNode;
         size++;
     }
 
     /**
-     * Haalt en verwijdert het element met de hoogste prioriteit.
-     * Bij gelijke prioriteit wordt FIFO-volgorde gebruikt.
-     * TC: O(1)
-     * SC: O(1)
-     * @return
+     * Vindt de kleinste waarde (hoogste prioriteit)
+     *
+     * @return de waarde met de hoogste prioriteit
+     * @throws NoSuchElementException als de queue leeg is
      */
-    @Override
-    public T dequeue() {
+    public T findMin() {
         if (head == null) {
-            return null;
+            throw new NoSuchElementException("PriorityQueue is empty");
+        }
+        return head.value;
+    }
+
+    /**
+     * Verwijdert de waarde met de hoogste prio
+     *
+     * @return verwijderde waarde
+     * @throws NoSuchElementException als de queue leeg is
+     */
+    public T removeMin() {
+        if (head == null) {
+            throw new NoSuchElementException("PriorityQueue is empty");
         }
 
-        T value = head.values.removeFirst();
+        T result = head.value;
+        head = head.next;
         size--;
-
-        if (head.values.isEmpty()) {
-            head = head.next;
-        }
-
-        return value;
+        return result;
     }
 
-    /**
-     * TC: O(1)
-     * SC: O(1)
-     * @return waarde || null als leeg
-     */
-    @Override
-    public T peek() {
-        if (head == null) return null;
-        return head.values.getFirst();
-    }
-
-    /**
-     * TC: O(n) worst case
-     * SC: O(1)
-     * @param value
-     * @return true als aanwezig
-     */
-    @Override
-    public boolean contains(T value) {
-        for (Bucket<T> b = head; b != null; b = b.next) {
-            if (b.values.contains(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * TC: O(n) worst case
-     * SC: O(1)
-     * @param value  te verwijderen waarde
-     * @return true als gevonden + verwijderd
-     */
-    @Override
-    public boolean remove(T value) {
-        Bucket<T> previous = null;
-        Bucket<T> current = head;
-
-        while (current != null) {
-            if (current.values.remove(value)) {
-                size--;
-
-                // bucket leeg? verwijder hem
-                if (current.values.isEmpty()) {
-                    if (previous == null) {
-                        head = current.next;
-                    } else {
-                        previous.next = current.next;
-                    }
-                }
-                return true;
-            }
-            previous = current;
-            current = current.next;
-        }
-
-        return false;
-    }
-
-    /**
-     * TC: O(n) worst case
-     * SC: O(1)
-     * @param value  waarvan de prio wordt aangepast
-     * @param newPriority nieuwe prio
-     * @return true als gevonden + bijgewerkt
-     */
-    @Override
-    public boolean updatePriority(T value, int newPriority) {
-        if (!remove(value)) {
-            return false;
-        }
-        //opnieuw invoegen met nieuwe prioriteit
-        enqueue(value, newPriority);
-        return true;
+    public boolean isEmpty() {
+        return head == null;
     }
 
     public int size() {
         return size;
-    }
-
-    public boolean isEmpty() {
-        return size == 0;
     }
 }
