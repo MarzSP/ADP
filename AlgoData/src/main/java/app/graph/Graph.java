@@ -9,7 +9,7 @@ import java.util.*;
  * @param <T> generic type voor de data in de vertices
  */
 public class Graph<T extends Comparable<T>> {
-
+    // 0 -> [A, 0] -> [B ,5] -> [C,2]
     private final LinkedList<VertexEntry> adjacencyList = new LinkedList<>();
 
     /**
@@ -18,6 +18,7 @@ public class Graph<T extends Comparable<T>> {
      */
     private class VertexEntry {
         final Vertex<T> vertex;
+        // VertexEntry: [A] -> edges: [ (weight 5, targetVertex B)]
         final LinkedList<Edge<T>> edges = new LinkedList<>();
 
         VertexEntry(Vertex<T> vertex) {
