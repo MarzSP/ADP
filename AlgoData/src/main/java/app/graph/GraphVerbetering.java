@@ -27,9 +27,10 @@ public class GraphVerbetering<T extends Comparable<T>> {
     }
 
     private int indexOfVertex(Vertex<T> vertex) {
-        for (int i = 0; i < adjacencyList.size(); i++) {
-            VertexEntry n = adjacencyList.get(i);
-            if (Objects.equals(n.vertex, vertex)) return i;
+        int index = 0;
+        for (VertexEntry entry : adjacencyList) {
+            if (Objects.equals(entry.vertex, vertex)) return index;
+            index++;
         }
         return -1;
     }
@@ -108,8 +109,7 @@ public class GraphVerbetering<T extends Comparable<T>> {
 
             VertexEntry currentNode = adjacencyList.get(u);
 
-            for (int e = 0; e < currentNode.edges.size(); e++) {
-                Edge<T> edge = currentNode.edges.get(e);
+            for (Edge<T> edge : currentNode.edges) {
                 Vertex<T> targetVertex = edge.getTargetVertex();
 
                 int v = indexOfVertex(targetVertex);

@@ -47,9 +47,10 @@ public class Graph<T extends Comparable<T>> {
      * @return index van de vertex of -1 als niet gevonden
      */
     private int indexOfVertex(Vertex<T> vertex) {
-        for (int i = 0; i < adjacencyList.size(); i++) {
-            VertexEntry n = adjacencyList.get(i);
-            if (Objects.equals(n.vertex, vertex)) return i;
+        int index = 0;
+        for (VertexEntry entry : adjacencyList) {
+            if (Objects.equals(entry.vertex, vertex)) return index;
+            index++;
         }
         return -1;
     }
@@ -162,8 +163,7 @@ public class Graph<T extends Comparable<T>> {
         if (currentIndex == -1) return;
 
         VertexEntry currentNode = adjacencyList.get(currentIndex);
-        for (int e = 0; e < currentNode.edges.size(); e++) {
-            Edge<T> edge = currentNode.edges.get(e);
+        for (Edge<T> edge : currentNode.edges) {
             Vertex<T> targetVertex = edge.getTargetVertex();
 
             int neighborIndex = indexOfVertex(targetVertex);

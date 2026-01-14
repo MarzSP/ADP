@@ -15,12 +15,12 @@ import java.util.Random;
  * - measure runs = 100
  *
  * Original Graph (lineair search)
- * Total: 2181,29 ms
- * Average per run: 21812,94 µs (21812939 ns)
+ * Total: 112,09 ms
+ * Average per run: 1120,92 µs (1120918 ns)
  *
- * GraphVerbetering (PriorityQueue)
- * Total: 2145,17 ms
- * Average per run: 21451,67 µs (21451666 ns)
+ * GraphVerbetering (PriorityQueue) - 10% sneller
+ * Total: 99,06 ms
+ * Average per run: 990,56 µs (990559 ns)
  */
 public class DijkstraDemoVerbeteringVergelijking {
 

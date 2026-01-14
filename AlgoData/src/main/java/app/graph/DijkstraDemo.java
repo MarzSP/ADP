@@ -15,7 +15,7 @@ import java.util.Arrays;
  * B: 1.0
  * C: 3.0
  * D: 6.0
- * Dijkstra runtime: 1.000 ns (0,001 ms)
+ * Dijkstra runtime: 800 ns (0,001 ms)
  *
  * Na toevoegen van edge B -> D (1):
  * A: 0.0
