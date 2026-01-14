@@ -39,16 +39,36 @@ Methoden:
     - src.edges.add(new Edge(1.0, toVertex)); Voeg een nieuwe edge toe van fromVertex naar toVertex met gewicht
     - Dit voegt een edge toe aan de uitgaande van source vertex naar de target vertex.
 
-- public void removeEdge(int fromVertex, int toVertex)
+- public void removeVertex(int fromVertex, int toVertex)
     - 1. Verwijder de vertex.
         Loop door de adjacencyList en verwijder de entry waarvan de entry gelijk is aan entry.vertex == vertex
     - 2. Verwijder alle edges die naar deze vertex wijzen.
         Loop door alle overgebleven nodes in de adjacencyList en verwijder alle edges die naar de verwijderde vertex wijzen. Dit gebeurt achterstevoren om index problemen te voorkomen.
   
 - public double[] dijkstraFromIndex(int startIndex)
-
+ - Check of startIndex geldig is
+ - Initialiseer een afstandsarray met oneindige waarden
+ - Zet de afstand van de startIndex naar zichzelf op 0.0
+ - Kies de startIndex als huidige vertex
+ - Roep de private recursive dijkstra functie aan met de huidige index
+ - Retourneer de afstandsarray distance[].
 
 - private void dijkstraRecursive(int currentIndex, double[] distance, boolean[] visited)
+ - Base case: als currentIndex -1 is, return. Er is geen geldige vertex meer om te bezoeken.
+ - Pak de huidige vertex entry uit de adjacencyList met currentIndex VertexEntry currentEntry = adjacencyList.get(currentIndex);
+ - We staan nu op currentEntry.vertex, welke edges heeft die? Welke buren heeft die?
+ - Loop door de uitgaande edges van currentEntry
+   - Voor elke directe verbinding (edge) van currentEntry:
+     - Bepaal de target vertex en het gewicht van de edge
+     - Vind de index van de target vertex in de adjacencyList
+     - Als de targetIndex geldig is en de target vertex nog niet bezocht is:
+       -double candidate = distance[currentIndex] + edge.weight; Bereken de potentiële nieuwe afstand naar de target vertex via currentEntry
+     -  If candidate < distance[targetIndex]: Als deze nieuwe afstand korter is dan de huidige bekende afstand:
+         - Update de afstand naar de target vertex in de distance array
+    - Markeer de huidige vertex als bezocht
+    - Dan kijken we welke vertex we nu als volgende moeten bezoeken
+    - int nextIndex = findClosestNotVisited(distance, visited); Vind de dichtstbijzijnde niet-bezochte vertex
+    - Roep dijkstraRecursive aan met nextIndex, distance, visited om verder te gaan
  
 
 - private int findClosestNotVisited(double[] distances, boolean[] visited)
@@ -60,10 +80,6 @@ Methoden:
             - bestIndex = i; // Update de index van de beste vertex
         -  return bestIndex; // Retourneer de index van de dichtstbijzijnde niet-bezochte vertex
 
-
-- public void removeVertex(int vertex)
-  - 1 loop door de adjacencyList om de node met de gegeven vertex te vinden en te verwijderen.
-  - 2 loop door alle overgebleven nodes in de adjacencyList en verwijder alle edges die naar de verwijderde vertex wijzen.
 
 
 # Edge Analyse
@@ -88,3 +104,6 @@ Bevat alleen de data van de vertex zelf.
   - Als het andere object null is of niet van hetzelfde type, retourneert het false.
 
 
+# Verbeterpunten
+- Gebruik een Priority Queue voor Dijkstra's algoritme om de efficiëntie te verbeteren.
+- Voeg foutafhandeling toe voor ongeldige inputs bij het toevoegen/verwijderen van vertices en edges.
