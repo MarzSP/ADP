@@ -8,7 +8,7 @@ package app.graph;
  */
 public class Edge<T> implements IEdge<T> {
 
-    private int weight;
+    private final int weight;
     private Vertex<T> target;
 
     public Edge(int weight, Vertex<T> target){

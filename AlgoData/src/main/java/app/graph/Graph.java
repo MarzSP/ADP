@@ -111,8 +111,8 @@ public class Graph<T extends Comparable<T>> {
             }
         }
         // Verwijder edges die naar de vertex wijzen
-        for (int i = 0; i < adjacencyList.size(); i++) {
-            LinkedList<Edge<T>> edges = adjacencyList.get(i).edges;
+        for (VertexEntry vertexEntry : adjacencyList) {
+            LinkedList<Edge<T>> edges = vertexEntry.edges;
             for (int j = edges.size() - 1; j >= 0; j--) {
                 if (Objects.equals(edges.get(j).getTargetVertex(), vertex)) {
                     edges.remove(j);

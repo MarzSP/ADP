@@ -9,7 +9,7 @@ import java.util.Objects;
  */
 public class Vertex<T> implements IVertex<T> {
 
-    private T data;
+    private final T data;
 
     public Vertex(T data){
         this.data = data;
