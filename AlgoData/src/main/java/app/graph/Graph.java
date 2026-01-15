@@ -98,7 +98,7 @@ public class Graph<T extends Comparable<T>> {
 
     /**
      * Verwijder een vertex en alle edges die ernaar wijzen
-     * TC: O(n + m) n vertices en m edges = 1x vertex zoeken/verwijderen + alle edges nalopen om verwijzingen te verwijderen
+     * TC: Best O(n) vertex staat vooraan en geen/weinig eddges. Worst O(n + m) n vertex/m edges = 1x vertex zoeken/verwijderen + alle edges nalopen om verwijzingen te verwijderen
      * SC: O(1)
      * @param vertex te verwijderen vertex
      */
@@ -126,7 +126,7 @@ public class Graph<T extends Comparable<T>> {
      * Returns afstanden met een double[] met Double.POSITIVE_INFINITY voor onbezochte vertices
      * Boolean[] houdt bij welke vertices al gedaan zijn
      * Double[] houdt de kortste afstanden bij
-     * TC: O(n + m*n) met n vertices en m edges
+     * TC: O(n^2 + m·n)
      * SC: O(n) voor distance en visited arrays
      * @param startIndex beginpunt voor Dijkstra
      * @return distances from startIndex to all others
@@ -182,6 +182,7 @@ public class Graph<T extends Comparable<T>> {
 
     /**
      * Zoek de index van de dichtstbijzijnde vertex die nog niet gedaan is (!visited[])
+     * distance[n] = adjacencyList size
      * TC: O(n) met n vertices om de distance array te doorlopen
      * SC: O(1)
      * @param distance afstanden

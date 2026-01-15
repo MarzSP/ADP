@@ -72,7 +72,7 @@ public class GraphVerbetering<T extends Comparable<T>> {
             }
         }
     }
-
+// VERBETERING: O((n+m) log n)).
     public double[] dijkstraFromIndex(int startIndex) {
         int n = adjacencyList.size();
         if (startIndex < 0 || startIndex >= n) {
