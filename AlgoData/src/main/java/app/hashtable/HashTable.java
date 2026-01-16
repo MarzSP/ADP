@@ -33,15 +33,28 @@ public class HashTable<K, V> {
     }
 
     /**
-     * Hash functie met modulo
-     * TC: O(1) SC: O(1)
-     * @param key key
-     * @param modulo modulo
-     * @return  hash value
+     * Hash functie opties
      */
     private int hashKey(K key, int modulo) {
         return Math.floorMod(key.hashCode(), modulo);
     }
+
+    /*
+    private int hashKey(K key, int modulo) {
+    int h = Objects.hashCode(key);
+    int mixed = h ^ (h >>> 16);
+    return Math.floorMod(mixed, modulo);
+    }
+
+    private int hashKey(K key, int modulo) {
+    String s = String.valueOf(key);
+    int h = 0;
+    for (int i = 0; i < s.length(); i++) {
+        h = (31 * h + s.charAt(i)) % modulo;
+    }
+    return h;
+    }
+     */
 
     /**
      * berekent start index voor key
