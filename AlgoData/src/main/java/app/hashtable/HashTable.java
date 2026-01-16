@@ -1,202 +1,162 @@
 package app.hashtable;
 
-import java.security.Key;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Objects;
 
 /**
- * Generic hashtable implementatie met linear probing
- * - Collisions: linear probing
- * - Resize: bij load factor > 0.75 doen we rehash naar een grotere array
+ * Hashtable implementatie met seperate chaining.
+ * - Collisions: chaining (LinkedList per bucket)
+ * - Resize: bij load factor > 0.75
+ * TC: get, put, remove: O(1) gemiddeld, O(n) in slechtste geval bij veel collisions
+ * SC: O(n) bij resize
+ * @param <K> key type
+ * @param <V> value type
  */
-public class HashTable<K, V> implements iHashable<K, V> {
+public class HashTable<K, V> {
 
-    private static final int DEFAULT_CAPACITY = 16;
-    private static final double MAX_LOAD_FACTOR = 0.75;
+    private int capacity = 11;
+    private int size = 0;
+    private static final double LOAD_FACTOR = 0.75;
 
-    private Object[] keys;
-    private Object[] values;
-    private int size;
+    @SuppressWarnings("unchecked")
+    private LinkedList<Entry<K, V>>[] table = (LinkedList<Entry<K, V>>[]) new LinkedList[capacity];
 
-    public HashTable() {
-        keys = new Object[DEFAULT_CAPACITY];
-        values = new Object[DEFAULT_CAPACITY];
-        size = 0;
-    }
+    private static class Entry<K, V> {
+        K key;
+        V value;
 
-    /**
-     * Berekent de hash index voor een key
-     * TC: O(1)
-     * SC: O(1)
-     */
-    private int hash(K key, int length) {
-        return Math.abs(key.hashCode()) % length;
-    }
-
-
-    private int hash(K key) {
-        return hash(key, keys.length);
-    }
-
-    /**
-     * Controleert of er genoeg ruimte is om een element toe te voegen.
-     * Zo niet, dan resize + rehash.
-     * TC: Best O(1), Worst O(n) wanneer resize nodig is
-     * SC: Worst O(n) nieuwe arrays bij resize
-     */
-    private void ensureCapacityForAdd() {
-        if ((size + 1) > (int) (keys.length * MAX_LOAD_FACTOR)) {
-            resize(keys.length * 2);
+        Entry(K key, V value) {
+            this.key = key;
+            this.value = value;
         }
     }
 
     /**
-     * Vergroot de hashtable en herplaatst alle elementen.
-     * TC: O(n) alle elementen opnieuw hashen
-     * SC: O(n) nieuwe arrays
+     * Hash functie met modulo
+     * TC: O(1) SC: O(1)
+     * @param key key
+     * @param modulo modulo
+     * @return  hash value
      */
-    @SuppressWarnings("unchecked")
-    private void resize(int newCapacity) {
-        Object[] oldKeys = keys;
-        Object[] oldValues = values;
+    private int hashKey(K key, int modulo) {
+        return Math.floorMod(key.hashCode(), modulo);
+    }
 
-        keys = new Object[newCapacity];
-        values = new Object[newCapacity];
-        size = 0;
+    /**
+     * berekent start index voor key
+     * @param key key
+     * @return start index
+     */
+    private int startIndexFor(K key) {
+        return hashKey(key, capacity);
+    }
 
-        for (int i = 0; i < oldKeys.length; i++) {
-            if (oldKeys[i] != null) {
-                put((K) oldKeys[i], (V) oldValues[i]);
+    /**
+     * Insert/update key/value pair
+     * TC: Best O(1), Worst O(n) bij veel collisions
+     * @return vorige waarde of null bij new entry
+     */
+    public V put(K key, V value) {
+        Objects.requireNonNull(key, "key is null");
+
+        if ((double) (size + 1) > capacity * LOAD_FACTOR) {
+            resize();
+        }
+
+        int index = startIndexFor(key);
+        LinkedList<Entry<K, V>> entries = table[index];
+        if (entries == null) {
+            entries = new LinkedList<>();
+            table[index] = entries;
+        }
+
+        for (Entry<K, V> e : entries) {
+            if (key.equals(e.key)) {
+                V old = e.value;
+                e.value = value;
+                return old;
             }
         }
+
+        entries.add(new Entry<>(key, value));
+        size++;
+        return null;
     }
 
     /**
-     * Zoekt de index van een key, of geeft -1 terug als hij niet bestaat.
-     * TC: Best O(1) Worst O(n) want bij veel collisions moet je ver zoeken
-     * SC: O(1)
+     * Get waarde voor key
+     * TC: Best O(1), Worst O(n) bij veel collisions
+     * @return waarde of null
      */
-    private int findIndex(K key) {
-        int index = hash(key);
-
-        while (keys[index] != null) {
-            if (keys[index].equals(key)) {
-                return index;
-            }
-            index = (index + 1) % keys.length;
-        }
-
-        return -1;
-    }
-
-    /**
-     * Zoekt een lege plek om een key te plaatsen (of de plek van dezelfde key).
-     * TC: Best O(1) Worst O(n) veel collisions
-     * SC: O(1)
-     */
-    private int findInsertIndex(K key) {
-        int index = hash(key);
-
-        while (keys[index] != null && !keys[index].equals(key)) {
-            index = (index + 1) % keys.length;
-        }
-
-        return index;
-    }
-
-    /**
-     * Voegt een key-value paar toe of overschrijft een bestaande key.
-     * TC: Best O(1) Worst O(n) bij resize of collisions
-     * SC: O(1)
-     */
-    @Override
-    public void put(K key, V value) {
-        if (key == null) throw new IllegalArgumentException("key mag niet null zijn");
-
-        ensureCapacityForAdd();
-
-        int index = findInsertIndex(key);
-
-        if (keys[index] == null) {
-            size++;
-        }
-
-        keys[index] = key;
-        values[index] = value;
-    }
-
-    /**
-     * Haalt de value op voor een gegeven key.
-     * TC: Best O(1) Worst O(n)
-     * SC: O(1)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
     public V get(K key) {
-        if (key == null) return null;
-
-        int index = findIndex(key);
-        if (index == -1) return null;
-
-        return (V) values[index];
-    }
-
-    /**
-     * Verwijdert een key-value paar uit de hashtable.
-     * Omdat we geen tombstones gebruiken, moeten we de probe-keten repareren:
-     * - Na het verwijderen rehashen we alle keys erna totdat we een null tegenkomen.
-     * TC: Best O(1) Worst O(n) bij veel collisions
-     * SC: O(1)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public V remove(K key) {
-        if (key == null) return null;
-
-        int index = findIndex(key);
-        if (index == -1) return null;
-
-        V removedValue = (V) values[index];
-
-        // Maak het gat
-        keys[index] = null;
-        values[index] = null;
-        size--;
-
-        // Rehash de cluster na dit gat anders worden keys "onvindbaar"
-        int next = (index + 1) % keys.length;
-        while (keys[next] != null) {
-            K rehashKey = (K) keys[next];
-            V rehashValue = (V) values[next];
-
-            keys[next] = null;
-            values[next] = null;
-            size--; // put() telt hem straks weer mee
-
-            put(rehashKey, rehashValue);
-
-            next = (next + 1) % keys.length;
+        Objects.requireNonNull(key, "key is null");
+        int index = startIndexFor(key);
+        LinkedList<Entry<K, V>> entry = table[index];
+        if (entry == null) return null;
+        for (Entry<K, V> e : entry) {
+            if (key.equals(e.key)) return e.value;
         }
-
-        return removedValue;
+        return null;
     }
 
     /**
-     * Controleer of een key bestaat
-     * TC: Best O(1), Average O(1), Worst O(n)
-     * SC: O(1)
+     * Verwijder key uit tabel
+     * TC: Best O(1), Worst O(n) bij veel collisions. SC: O(1)
+     * @return waarde of null
      */
-    @Override
-    public boolean containsKey(K key) {
-        return get(key) != null;
+    public V remove(K key) {
+        Objects.requireNonNull(key, "key is null");
+        int index = startIndexFor(key);
+        LinkedList<Entry<K, V>> entries = table[index];
+        if (entries == null) return null;
+
+        Iterator<Entry<K, V>> it = entries.iterator();
+        while (it.hasNext()) {
+            Entry<K, V> entry = it.next();
+            if (key.equals(entry.key)) {
+                V old = entry.value;
+                it.remove();
+                size--;
+                if (entries.isEmpty()) table[index] = null;
+                return old;
+            }
+        }
+        return null;
     }
 
     /**
-     * Geef het aantal opgeslagen elementen terug
-     * TC: O(1)
-     * SC: O(1)
+     * Aantal entries in tabel
      */
-    @Override
     public int size() {
         return size;
+    }
+
+    /**
+     * Resize en rehash entries naar een grotere tabel
+     * Capacity wordt verdubbeld + 1
+     * TC: O(n) SC: O(n)
+     */
+    @SuppressWarnings("unchecked")
+    private void resize() {
+        int newCapacity = capacity * 2 + 1;
+        LinkedList<Entry<K, V>>[] newTable = (LinkedList<Entry<K, V>>[]) new LinkedList[newCapacity];
+
+        for (LinkedList<Entry<K, V>> entries : table) {
+            if (entries == null) continue;
+            for (Entry<K, V> entry : entries) {
+                int index = hashKey(entry.key, newCapacity);
+                LinkedList<Entry<K, V>> newEntries = newTable[index];
+                if (newEntries == null) {
+                    newEntries = new LinkedList<>();
+                    newTable[index] = newEntries;
+                }
+                newEntries.add(new Entry<>(entry.key, entry.value));
+            }
+        }
+
+        this.table = newTable;
+        this.capacity = newCapacity;
     }
 
 }
