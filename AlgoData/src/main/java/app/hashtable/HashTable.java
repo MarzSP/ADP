@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  * Hashtable implementatie met seperate chaining.
- * - Collisions: chaining (LinkedList per bucket)
+ * - Collisions: chaining (LinkedList per Entry)
  * - Resize: bij load factor > 0.75
  * TC: get, put, remove: O(1) gemiddeld, O(n) in slechtste geval bij veel collisions
  * SC: O(n) bij resize
@@ -34,6 +34,11 @@ public class HashTable<K, V> {
 
     /**
      * Hash functie opties
+     * put("abc", 42)
+     * "abc".hashCode()" = 96354 dan modulo, rest 5.
+     * Entry [index 5]:
+     *  ├─ key   - "abc"
+     *  └─ value - 42
      */
     private int hashKey(K key, int modulo) {
         return Math.floorMod(key.hashCode(), modulo);
@@ -57,11 +62,12 @@ public class HashTable<K, V> {
      */
 
     /**
-     * berekent start index voor key
+     * vind de index voor een key
+     * findIndexFor("abc")  =  5
      * @param key key
-     * @return start index
+     * @return  index
      */
-    private int startIndexFor(K key) {
+    private int findIndexFor(K key) {
         return hashKey(key, capacity);
     }
 
@@ -77,7 +83,7 @@ public class HashTable<K, V> {
             resize();
         }
 
-        int index = startIndexFor(key);
+        int index = findIndexFor(key);
         LinkedList<Entry<K, V>> entries = table[index];
         if (entries == null) {
             entries = new LinkedList<>();
@@ -104,7 +110,7 @@ public class HashTable<K, V> {
      */
     public V get(K key) {
         Objects.requireNonNull(key, "key is null");
-        int index = startIndexFor(key);
+        int index = findIndexFor(key);
         LinkedList<Entry<K, V>> entry = table[index];
         if (entry == null) return null;
         for (Entry<K, V> e : entry) {
@@ -120,7 +126,7 @@ public class HashTable<K, V> {
      */
     public V remove(K key) {
         Objects.requireNonNull(key, "key is null");
-        int index = startIndexFor(key);
+        int index = findIndexFor(key);
         LinkedList<Entry<K, V>> entries = table[index];
         if (entries == null) return null;
 
