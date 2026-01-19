@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 /**
- * Hashtable implementatie met seperate chaining.
+ * Hashtable implementatie met separate chaining.
  * - Collisions: chaining (LinkedList per Entry)
  * - Resize: bij load factor > 0.75
  * TC: get, put, remove: O(1) gemiddeld, O(n) in slechtste geval bij veel collisions
@@ -40,17 +40,19 @@ public class HashTable<K, V> {
      *  ├─ key   - "abc"
      *  └─ value - 42
      */
+
     private int hashKey(K key, int modulo) {
         return Math.floorMod(key.hashCode(), modulo);
     }
 
-    /*
+/*
     private int hashKey(K key, int modulo) {
     int h = Objects.hashCode(key);
     int mixed = h ^ (h >>> 16);
     return Math.floorMod(mixed, modulo);
-    }
+    } */
 
+/*
     private int hashKey(K key, int modulo) {
     String s = String.valueOf(key);
     int h = 0;
@@ -58,8 +60,8 @@ public class HashTable<K, V> {
         h = (31 * h + s.charAt(i)) % modulo;
     }
     return h;
-    }
-     */
+    } */
+
 
     /**
      * vind de index voor een key
