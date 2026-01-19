@@ -14,13 +14,20 @@ import java.util.Objects;
  * @param <V> value type
  */
 public class HashTable<K, V> {
-
-    private int capacity = 11;
+    // defaults to 11
+    private int capacity;
     private int size = 0;
-    private static final double LOAD_FACTOR = 0.75;
 
-    @SuppressWarnings("unchecked")
-    private LinkedList<Entry<K, V>>[] table = (LinkedList<Entry<K, V>>[]) new LinkedList[capacity];
+    public HashTable(int capacity) {
+        this.capacity = capacity;
+
+        //noinspection unchecked
+        table = (LinkedList<Entry<K, V>>[]) new LinkedList[capacity];
+    }
+    public HashTable() {
+        this(11);
+    }
+    private LinkedList<Entry<K, V>>[] table;
 
     private static class Entry<K, V> {
         K key;
@@ -81,10 +88,6 @@ public class HashTable<K, V> {
     public V put(K key, V value) {
         Objects.requireNonNull(key, "key is null");
 
-        if ((double) (size + 1) > capacity * LOAD_FACTOR) {
-            resize();
-        }
-
         int index = findIndexFor(key);
         LinkedList<Entry<K, V>> entries = table[index];
         if (entries == null) {
@@ -105,6 +108,10 @@ public class HashTable<K, V> {
         return null;
     }
 
+    public boolean contains(K key) {
+        return get(key) != null;
+    }
+
     /**
      * Get waarde voor key
      * TC: Best O(1), Worst O(n) bij veel collisions
@@ -112,11 +119,17 @@ public class HashTable<K, V> {
      */
     public V get(K key) {
         Objects.requireNonNull(key, "key is null");
+
         int index = findIndexFor(key);
-        LinkedList<Entry<K, V>> entry = table[index];
-        if (entry == null) return null;
-        for (Entry<K, V> e : entry) {
-            if (key.equals(e.key)) return e.value;
+        LinkedList<Entry<K, V>> entries = table[index];
+        if (entries == null) {
+            return null;
+        }
+
+        for (Entry<K, V> e : entries) {
+            if (key.equals(e.key)) {
+                return e.value;
+            }
         }
         return null;
     }
@@ -128,20 +141,27 @@ public class HashTable<K, V> {
      */
     public V remove(K key) {
         Objects.requireNonNull(key, "key is null");
+
         int index = findIndexFor(key);
         LinkedList<Entry<K, V>> entries = table[index];
-        if (entries == null) return null;
+        if (entries == null) {
+            return null;
+        }
 
         Iterator<Entry<K, V>> it = entries.iterator();
         while (it.hasNext()) {
             Entry<K, V> entry = it.next();
-            if (key.equals(entry.key)) {
-                V old = entry.value;
-                it.remove();
-                size--;
-                if (entries.isEmpty()) table[index] = null;
-                return old;
+            if (!key.equals(entry.key)) {
+                continue;
             }
+            V old = entry.value;
+            it.remove();
+            size--;
+
+            if (entries.isEmpty()) {
+                table[index] = null;
+            }
+            return old;
         }
         return null;
     }
@@ -159,12 +179,13 @@ public class HashTable<K, V> {
      * TC: O(n) SC: O(n)
      */
     @SuppressWarnings("unchecked")
-    private void resize() {
-        int newCapacity = capacity * 2 + 1;
+    public void resize(int newCapacity) {
         LinkedList<Entry<K, V>>[] newTable = (LinkedList<Entry<K, V>>[]) new LinkedList[newCapacity];
 
         for (LinkedList<Entry<K, V>> entries : table) {
-            if (entries == null) continue;
+            if (entries == null) {
+                continue;
+            }
             for (Entry<K, V> entry : entries) {
                 int index = hashKey(entry.key, newCapacity);
                 LinkedList<Entry<K, V>> newEntries = newTable[index];
@@ -178,6 +199,18 @@ public class HashTable<K, V> {
 
         this.table = newTable;
         this.capacity = newCapacity;
+    }
+
+    void clear() {
+        for (int i = 0; i < table.length; i++) {
+            LinkedList<Entry<K, V>> entries = table[i];
+            if (entries == null) {
+                continue;
+            }
+            entries.clear();
+            table[i] = entries;
+        }
+        size = 0;
     }
 
 }

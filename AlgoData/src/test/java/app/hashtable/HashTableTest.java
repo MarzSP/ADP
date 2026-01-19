@@ -26,6 +26,7 @@ public class HashTableTest {
             t.put("k" + i, i);
         }
         assertEquals(200, t.size());
+        t.resize(13);
         assertEquals(42, t.get("k42"));
         assertEquals(199, t.get("k199"));
     }
