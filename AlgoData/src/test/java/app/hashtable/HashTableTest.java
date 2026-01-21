@@ -185,4 +185,39 @@ public class HashTableTest {
         assertEquals(N + 1999, t.get("p" + (N + 1999)));
     }
 
+    @Test
+    public void testContainsKeyBasic() {
+        HashTable<String, Integer> t = new HashTable<>();
+        assertFalse(t.containsKey("x"));
+        t.put("x", 1);
+        assertTrue(t.containsKey("x"));
+    }
+
+    @Test
+    public void testInvalidCapacityThrows() {
+        assertThrows(IllegalArgumentException.class, () -> new HashTable<String, Integer>(0));
+        assertThrows(IllegalArgumentException.class, () -> new HashTable<String, Integer>(-1));
+    }
+
+    @Test
+    public void testClearEmptiesTable() {
+        HashTable<String, Integer> t = new HashTable<>();
+        t.put("a", 1);
+        t.put("b", 2);
+        assertEquals(2, t.size());
+
+        t.clear();
+
+        assertEquals(0, t.size());
+        assertNull(t.get("a"));
+        assertNull(t.get("b"));
+
+        // daarna moet hij nog gewoon werken
+        assertNull(t.put("c", 3));
+        assertEquals(1, t.size());
+        assertEquals(3, t.get("c"));
+    }
+
+
+
 }

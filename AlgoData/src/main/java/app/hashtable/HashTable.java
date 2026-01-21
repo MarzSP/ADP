@@ -34,7 +34,7 @@ public class HashTable<K, V> {
     }
 
     /**
-     * Constructor: initialiseer hashtable met gegeven capaciteit
+     * Constructor 1: initialiseer hashtable met gegeven capaciteit
      * @param capacity moet > 0 zijn
      */
     @SuppressWarnings("unchecked")
@@ -46,7 +46,7 @@ public class HashTable<K, V> {
     }
 
     /**
-     * Constructor: initialiseer hashtable met default capaciteit(11)
+     * Constructor 2: initialiseer hashtable met default capaciteit(11)
      */
     public HashTable() {
         this(11);
