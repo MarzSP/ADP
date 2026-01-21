@@ -1,5 +1,6 @@
 package app.hashtable;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -8,29 +9,22 @@ import java.util.Objects;
  * Hashtable implementatie met separate chaining.
  * - Collisions: chaining (LinkedList per Entry)
  * - Resize: bij load factor > 0.75
+ * - Default capacity: 11
  * TC: get, put, remove: O(1) gemiddeld, O(n) in slechtste geval bij veel collisions
  * SC: O(n) bij resize
  * @param <K> key type
  * @param <V> value type
  */
 public class HashTable<K, V> {
-    // defaults to 11
+
     private int capacity;
     private int size = 0;
+    private static final double LOAD_FACTOR = 0.75;
 
-    public HashTable(int capacity) {
-        this.capacity = capacity;
-
-        //noinspection unchecked
-        table = (LinkedList<Entry<K, V>>[]) new LinkedList[capacity];
-    }
-    public HashTable() {
-        this(11);
-    }
     private LinkedList<Entry<K, V>>[] table;
 
     private static class Entry<K, V> {
-        K key;
+        final K key;
         V value;
 
         Entry(K key, V value) {
@@ -40,39 +34,44 @@ public class HashTable<K, V> {
     }
 
     /**
-     * Hash functie opties
-     * put("abc", 42)
-     * "abc".hashCode()" = 96354 dan modulo, rest 5.
+     * Constructor: initialiseer hashtable met gegeven capaciteit
+     * @param capacity moet > 0 zijn
+     */
+    @SuppressWarnings("unchecked")
+    public HashTable(int capacity) {
+        if (capacity <= 0) throw new IllegalArgumentException("capacity must be > 0");
+
+        this.capacity = capacity;
+        table = (LinkedList<Entry<K, V>>[]) new LinkedList[capacity];
+    }
+
+    /**
+     * Constructor: initialiseer hashtable met default capaciteit(11)
+     */
+    public HashTable() {
+        this(11);
+    }
+
+
+    /**
+     * Hash een key naar een index. FloorMod zorgt voor positieve index.
+     * Bijvoorbeeld: Zet key "abc", met waarde 42, in een tabel met modulo 11
+     * "abc".hashCode() = 96354 dan modulo, rest 5.
      * Entry [index 5]:
      *  ├─ key   - "abc"
      *  └─ value - 42
+     *  TC: O(1)
+     * @param key key
+     * @param modulo modulo (capacity)
+     * @return index
      */
-
     private int hashKey(K key, int modulo) {
         return Math.floorMod(key.hashCode(), modulo);
     }
 
-/*
-    private int hashKey(K key, int modulo) {
-    int h = Objects.hashCode(key);
-    int mixed = h ^ (h >>> 16);
-    return Math.floorMod(mixed, modulo);
-    } */
-
-/*
-    private int hashKey(K key, int modulo) {
-    String s = String.valueOf(key);
-    int h = 0;
-    for (int i = 0; i < s.length(); i++) {
-        h = (31 * h + s.charAt(i)) % modulo;
-    }
-    return h;
-    } */
-
-
     /**
-     * vind de index voor een key
-     * findIndexFor("abc")  =  5
+     * Vind de index voor een key
+     * TC: O(1)
      * @param key key
      * @return  index
      */
@@ -81,20 +80,28 @@ public class HashTable<K, V> {
     }
 
     /**
-     * Insert/update key/value pair
+     * Insert of update key/value pair
      * TC: Best O(1), Worst O(n) bij veel collisions
      * @return vorige waarde of null bij new entry
      */
     public V put(K key, V value) {
         Objects.requireNonNull(key, "key is null");
 
+        // Resize voordat we toevoegen als load factor overschreden wordt
+        if ((double) size / capacity >= LOAD_FACTOR) {
+            resize(capacity * 2 + 1);
+        }
+
         int index = findIndexFor(key);
         LinkedList<Entry<K, V>> entries = table[index];
+
+        // Maak alleen een nieuwe LinkedList aan als nodig
         if (entries == null) {
             entries = new LinkedList<>();
             table[index] = entries;
         }
 
+        // Update pad: key bestaat al -> value vervangen
         for (Entry<K, V> e : entries) {
             if (key.equals(e.key)) {
                 V old = e.value;
@@ -108,14 +115,10 @@ public class HashTable<K, V> {
         return null;
     }
 
-    public boolean contains(K key) {
-        return get(key) != null;
-    }
-
     /**
-     * Get waarde voor key
+     * Haal de value op voor een key
      * TC: Best O(1), Worst O(n) bij veel collisions
-     * @return waarde of null
+     * @return waarde of null als key niet bestaat
      */
     public V get(K key) {
         Objects.requireNonNull(key, "key is null");
@@ -136,7 +139,7 @@ public class HashTable<K, V> {
 
     /**
      * Verwijder key uit tabel
-     * TC: Best O(1), Worst O(n) bij veel collisions. SC: O(1)
+     * TC: Best O(1), Worst O(n) bij veel collisions.
      * @return waarde of null
      */
     public V remove(K key) {
@@ -167,13 +170,6 @@ public class HashTable<K, V> {
     }
 
     /**
-     * Aantal entries in tabel
-     */
-    public int size() {
-        return size;
-    }
-
-    /**
      * Resize en rehash entries naar een grotere tabel
      * Capacity wordt verdubbeld + 1
      * TC: O(n) SC: O(n)
@@ -201,16 +197,32 @@ public class HashTable<K, V> {
         this.capacity = newCapacity;
     }
 
-    void clear() {
-        for (int i = 0; i < table.length; i++) {
-            LinkedList<Entry<K, V>> entries = table[i];
-            if (entries == null) {
-                continue;
-            }
-            entries.clear();
-            table[i] = entries;
-        }
+    /**
+     * Verwijdert alle entries uit de hashtable.
+     * Alle buckets worden op null gezet zodat er geen lege chains achterblijven
+     * TC: O(capacity)
+     * SC: O(1)
+     */
+    public void clear() {
+        Arrays.fill(table, null);
         size = 0;
     }
+
+    /**
+     * Check of key in tabel zit
+     * TC: Best O(1), Worst O(n) bij veel collisions
+     * @return true als key bestaat
+     */
+    public boolean containsKey(K key) {
+        return get(key) != null;
+    }
+
+    /**
+     * Aantal entries in tabel
+     */
+    public int size() {
+        return size;
+    }
+
 
 }

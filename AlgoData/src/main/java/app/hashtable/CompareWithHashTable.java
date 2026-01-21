@@ -7,13 +7,13 @@ import java.util.Map;
 
 /**
  * Demo vergelijken HashTable implementatie met Java Hashtable
- *  Benchmarks met N=100_000
- *   HashTable put: 29655900 ns (29,656 ms)
- *   Java Hashtable put: 7201200 ns (7,201 ms)
- *   HashTable get: 6919400 ns (6,919 ms)
- *   Java Hashtable get: 2255300 ns (2,255 ms)
- *   HashTable remove: 26270800 ns (26,271 ms)
- *   Java Hashtable remove: 3212800 ns (3,213 ms)
+ Benchmarks met N=100000
+ HashTable put: 28,633 ms
+ Java Hashtable put: 7,137 ms
+ HashTable get: 8,558 ms
+ Java Hashtable get: 2,339 ms
+ HashTable remove: 28,886 ms
+ Java Hashtable remove: 3,277 ms
  *
  *   Java gebruikt probing ipv chaining,
  *   Java gebruikt bitmasking ipv modulo
