@@ -12,6 +12,7 @@ import java.util.Objects;
  * - Default capacity: 11
  * TC: get, put, remove: O(1) gemiddeld, O(n) in slechtste geval bij veel collisions
  * SC: O(n) bij resize
+ *
  * @param <K> key type
  * @param <V> value type
  */
@@ -35,6 +36,7 @@ public class HashTable<K, V> {
 
     /**
      * Constructor 1: initialiseer hashtable met gegeven capaciteit
+     *
      * @param capacity moet > 0 zijn
      */
     @SuppressWarnings("unchecked")
@@ -58,10 +60,11 @@ public class HashTable<K, V> {
      * Bijvoorbeeld: Zet key "abc", met waarde 42, in een tabel met modulo 11
      * "abc".hashCode() = 96354 dan modulo, rest 5.
      * Entry [index 5]:
-     *  ├─ key   - "abc"
-     *  └─ value - 42
-     *  TC: O(1)
-     * @param key key
+     * ├─ key   - "abc"
+     * └─ value - 42
+     * TC: O(1)
+     *
+     * @param key    key
      * @param modulo modulo (capacity)
      * @return index
      */
@@ -72,8 +75,9 @@ public class HashTable<K, V> {
     /**
      * Vind de index voor een key
      * TC: O(1)
+     *
      * @param key key
-     * @return  index
+     * @return index
      */
     private int findIndexFor(K key) {
         return hashKey(key, capacity);
@@ -82,6 +86,7 @@ public class HashTable<K, V> {
     /**
      * Insert of update key/value pair
      * TC: Best O(1), Worst O(n) bij veel collisions
+     *
      * @return vorige waarde of null bij new entry
      */
     public V put(K key, V value) {
@@ -119,6 +124,7 @@ public class HashTable<K, V> {
     /**
      * Haal de value op voor een key
      * TC: Best O(1), Worst O(n) bij veel collisions
+     *
      * @return waarde of null als key niet bestaat
      */
     public V get(K key) {
@@ -141,6 +147,7 @@ public class HashTable<K, V> {
     /**
      * Verwijder key uit tabel
      * TC: Best O(1), Worst O(n) bij veel collisions.
+     *
      * @return waarde of null
      */
     public V remove(K key) {
@@ -212,6 +219,7 @@ public class HashTable<K, V> {
     /**
      * Check of key in tabel zit
      * TC: Best O(1), Worst O(n) bij veel collisions
+     *
      * @return true als key bestaat
      */
     public boolean containsKey(K key) {

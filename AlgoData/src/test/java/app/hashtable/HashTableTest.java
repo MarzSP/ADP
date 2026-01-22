@@ -68,18 +68,30 @@ public class HashTableTest {
     }
 
 
-
     // Helper key class forceert collisions door altijd dezelfde hashcode te returnen
     private static final class Collider {
         private final String id;
-        Collider(String id) { this.id = id; }
-        @Override public int hashCode() { return 42; }
-        @Override public boolean equals(Object o) {
+
+        Collider(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public int hashCode() {
+            return 42;
+        }
+
+        @Override
+        public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof Collider)) return false;
             return id.equals(((Collider) o).id);
         }
-        @Override public String toString() { return id; }
+
+        @Override
+        public String toString() {
+            return id;
+        }
     }
 
     @Test
@@ -238,7 +250,6 @@ public class HashTableTest {
         assertEquals(1, t.size());
         assertEquals(3, t.get("c"));
     }
-
 
 
 }
