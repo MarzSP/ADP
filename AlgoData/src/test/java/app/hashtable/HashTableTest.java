@@ -45,6 +45,30 @@ public class HashTableTest {
         assertThrows(NullPointerException.class, () -> t.remove(null));
     }
 
+    @Test
+    public void testRemoveLastEntryClearsCorrectly() {
+        HashTable<Collider, Integer> t = new HashTable<>();
+        Collider a = new Collider("a");
+        t.put(a, 1);
+        assertEquals(1, t.remove(a));
+        assertEquals(0, t.size());
+
+        // opnieuw toevoegen op dezelfde hash moet gewoon werken
+        Collider b = new Collider("b");
+        t.put(b, 2);
+        assertEquals(2, t.get(b));
+    }
+
+    @Test
+    public void testAutoResizeKeepsAllEntries() {
+        HashTable<String, Integer> t = new HashTable<>(); // 11
+        for (int i = 0; i < 50; i++) t.put("k" + i, i);
+        for (int i = 0; i < 50; i++) assertEquals(i, t.get("k" + i));
+        assertEquals(50, t.size());
+    }
+
+
+
     // Helper key class forceert collisions door altijd dezelfde hashcode te returnen
     private static final class Collider {
         private final String id;
@@ -95,14 +119,11 @@ public class HashTableTest {
     }
 
     @Test
-    public void testNullValueIsAllowed() {
+    public void testNullValueThrows() {
         HashTable<String, Integer> t = new HashTable<>();
-        assertNull(t.put("n", null));
-        assertNull(t.get("n"));
-        assertEquals(1, t.size());
-        assertNull(t.remove("n"));
-        assertEquals(0, t.size());
+        assertThrows(NullPointerException.class, () -> t.put("n", null));
     }
+
 
     @Test
     public void testEmptyTableOperations() {
