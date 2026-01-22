@@ -86,6 +86,7 @@ public class HashTable<K, V> {
      */
     public V put(K key, V value) {
         Objects.requireNonNull(key, "key is null");
+        Objects.requireNonNull(value, "value is null");
 
         // Resize voordat we toevoegen als load factor overschreden wordt
         if ((double) size / capacity >= LOAD_FACTOR) {
